@@ -1,0 +1,18 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:VisualElement name="header" class="mb-2" style="flex-grow: 1;">
+        <ui:VisualElement style="flex-grow: initial; flex-direction: row;">
+            <ui:Label tabindex="-1" text="캐릭터 목록" parse-escape-sequences="true" display-tooltip-when-elided="true" class="text-gray-900" style="font-size: 24px; -unity-font-style: bold;" />
+            <ui:VisualElement style="flex-grow: 1; flex-direction: row-reverse;">
+                <ui:Button text="내보내기" parse-escape-sequences="true" display-tooltip-when-elided="true" name="export-button" class="primary" />
+                <ui:Button text="아이템 가져오기" parse-escape-sequences="true" display-tooltip-when-elided="true" name="import-button" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:Label tabindex="-1" text="Lorem ipsum" parse-escape-sequences="true" display-tooltip-when-elided="true" name="subtitle" class="text-gray-500" />
+    </ui:VisualElement>
+    <ui:VisualElement style="flex-grow: 1; flex-direction: row; max-height: 90%;">
+        <ui:VisualElement name="content" class="flex-1" style="flex-grow: 1; -unity-text-align: upper-left;">
+            <ui:ScrollView name="scroll-view" />
+        </ui:VisualElement>
+        <ui:VisualElement name="preview" class="flex-1" style="flex-grow: 1;" />
+    </ui:VisualElement>
+</ui:UXML>

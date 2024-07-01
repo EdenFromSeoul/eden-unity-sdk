@@ -1,0 +1,74 @@
+{
+  "dependencies": {
+    "com.vrchat.core.vpm-resolver": {
+      "version": "0.1.29"
+    },
+    "com.vrchat.avatars": {
+      "version": "3.6.1"
+    },
+    "nadena.dev.modular-avatar": {
+      "version": "1.9.13"
+    },
+    "jp.pokemori.vrm-converter-for-vrchat": {
+      "version": "41.1.0"
+    }
+  },
+  "locked": {
+    "com.vrchat.core.vpm-resolver": {
+      "version": "0.1.29",
+      "dependencies": {}
+    },
+    "com.vrchat.avatars": {
+      "version": "3.6.1",
+      "dependencies": {
+        "com.vrchat.base": "3.6.1"
+      }
+    },
+    "com.vrchat.base": {
+      "version": "3.6.1",
+      "dependencies": {}
+    },
+    "nadena.dev.modular-avatar": {
+      "version": "1.9.13",
+      "dependencies": {
+        "com.vrchat.avatars": ">=3.4.0",
+        "nadena.dev.ndmf": ">=1.4.1 <2.0.0-a"
+      }
+    },
+    "nadena.dev.ndmf": {
+      "version": "1.4.1",
+      "dependencies": {}
+    },
+    "jp.pokemori.vrm-converter-for-vrchat": {
+      "version": "41.1.0",
+      "dependencies": {
+        "com.vrchat.avatars": "^3.5.0",
+        "com.vrmc.univrm": "^0.121.0",
+        "jp.pokemori.univrm-extensions": "^10.1.0"
+      }
+    },
+    "com.vrmc.univrm": {
+      "version": "0.121.0",
+      "dependencies": {
+        "com.vrmc.vrmshaders": "0.121.0",
+        "com.vrmc.gltf": "0.121.0"
+      }
+    },
+    "com.vrmc.vrmshaders": {
+      "version": "0.121.0",
+      "dependencies": {}
+    },
+    "com.vrmc.gltf": {
+      "version": "0.121.0",
+      "dependencies": {
+        "com.vrmc.vrmshaders": "0.121.0"
+      }
+    },
+    "jp.pokemori.univrm-extensions": {
+      "version": "10.1.0",
+      "dependencies": {
+        "com.vrmc.univrm": "^0.121.0"
+      }
+    }
+  }
+}

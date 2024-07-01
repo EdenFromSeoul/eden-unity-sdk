@@ -1,0 +1,134 @@
+:root {
+    background-color: white;
+    --primary: #006FEE;
+    --primary-hover: #338ef7;
+    --primary-active: #66aaf9;
+    --primary-selected: #005bc4;
+    --secondary: #7828c8;
+    --secondary-hover: #9353d3;
+    --secondary-active: #ae7ede;
+    --secondary-selected: #6020a0;
+    --default: #d4d4d8;
+    --default-hover: #dddde0;
+    --default-active: #e4e4e7;
+    --default-selected: #a1a1aa;
+    --warning: #f5a524;
+    --warning-hover: #f7b750;
+    --warning-active: #f9c97c;
+    --warning-selected: #c4841d;
+    --success: #17C964;
+    --success-hover: #43d589;
+    --success-active: #6ee1ae;
+    --success-selected: #0faa4d;
+    --danger: #f31260;
+    --danger-hover: #f5337f;
+    --danger-active: #f7549f;
+    --danger-selected: #c10f4e;
+    --black: #000000;
+    --black-hover: #1a1a1a;
+    --black-active: #333333;
+    --black-selected: #000000;
+}
+
+VisualElement {
+    transition-duration: 0.2s;
+    transition-property: background-color, color, border-color;
+    transition-timing-function: ease-in-out;
+}
+
+Button {
+    padding: 6px 16px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-width: 0;
+    border-radius: 4px;
+    background-color: white;
+    color: var(--black);
+    -unity-font-style: normal;
+}
+
+Button:hover {
+    background-color: var(--black-hover);
+    color: white;
+}
+
+Button:active {
+    background-color: var(--black-active);
+    color: white;
+}
+
+Button.primary {
+    background-color: var(--primary);
+    color: white;
+}
+
+Button.primary:hover {
+    background-color: var(--primary-hover);
+}
+
+Button.primary:active {
+    background-color: var(--primary-active);
+}
+
+ItemButton {
+    border-width: 0 0 1px 0;
+    border-radius: 0;
+    border-color: var(--default);
+    flex-direction: row;
+    background-color: white;
+    transition: 150ms;
+    width: 100%;
+}
+
+ItemButton:hover {
+    background-color: var(--primary-hover);
+    color: white;
+}
+
+ItemButton:hover Label {
+    color: white;
+}
+
+ItemButton:active {
+    background-color: var(--primary-active);
+    color: white;
+}
+
+ItemButton:active Label {
+    color: white;
+}
+
+ItemButton Image {
+    flex-shrink: 0;
+}
+
+ItemButton > VisualElement {
+    padding: 12px;
+}
+
+ItemButton * {
+    font-size: 14px;
+}
+
+ItemButton Label {
+    color: var(--black);
+}
+
+/* Selection and Pinning Styles */
+.selected {
+    background-color: var(--primary);
+    border-color: var(--primary);
+}
+
+.selected Label {
+    color: white;
+}
+
+.selected:hover {
+    background-color: var(--primary-hover);
+}
+
+#import-button {
+    margin-right: 8px;
+}

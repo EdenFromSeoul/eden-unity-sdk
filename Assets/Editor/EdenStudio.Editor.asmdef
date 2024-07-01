@@ -1,0 +1,33 @@
+{
+    "name": "EdenStudio.Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:05dd262a0c0a2f841b8252c8c3815582",
+        "GUID:8d76e605759c3f64a957d63ef96ada7c",
+        "GUID:5718fb738711cd34ea54e9553040911d",
+        "GUID:b906909fcc54f634db50f2cad0f988d9",
+        "GUID:3456780c4fb2d324ab9c633d6f1b0ddb",
+        "GUID:6e9c6119ac4eb334284fb7b4bc6d1f05",
+        "GUID:80b7aa45b0c3244218418a6116d645be",
+        "GUID:e47c917724578cc43b5506c17a27e9a0",
+        "GUID:6aae90b2207f6fe4fa38ba53e3ab92ef",
+        "GUID:7da8a75dcade2144aab699032d7d7987",
+        "GUID:da3e51d19d51a544fa14d43fee843098",
+        "GUID:529ce3a240c1a7a4bbbb220bbd59686b",
+        "GUID:60c8346e00a8ddd4cafc5a02eceeec57",
+        "GUID:301b251fd9834274c9228e0532f444f7",
+        "GUID:bce005214fa49654d93927908c15b1f2",
+        "GUID:e3216dcc79b326b47b307c06b99c7331",
+        "GUID:0aaf403bd13871a44b7127aef2695ff8",
+        "GUID:2ef84b520212e174a94668c7a0862d3b"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
