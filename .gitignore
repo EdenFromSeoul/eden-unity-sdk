@@ -218,4 +218,7 @@ $RECYCLE.BIN/
 # Addressables generated folder
 ServerData/
 
+# Eden generated folder
+/[Ee]den/
+
 # End of https://www.toptal.com/developers/gitignore/api/unity,rider,windows,macos
