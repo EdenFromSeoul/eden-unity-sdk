@@ -220,5 +220,6 @@ ServerData/
 
 # Eden generated folder
 /[Ee]den/
+/[Aa]ssets/[Ee]den/
 
 # End of https://www.toptal.com/developers/gitignore/api/unity,rider,windows,macos
