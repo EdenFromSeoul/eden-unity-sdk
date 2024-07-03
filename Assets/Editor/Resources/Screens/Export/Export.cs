@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Editor.Resources.Components;
 using Editor.Scripts;
 using Editor.Scripts.Manager;
+using lilToon;
 using Runtime;
 using UniGLTF;
 using UnityEditor;
@@ -15,9 +16,6 @@ using UniVRM10;
 using VrmLib;
 using VRMShaders;
 using ScrollView = UnityEngine.UIElements.ScrollView;
-
-using lilToon;
-using Object = UnityEngine.Object;
 
 namespace Editor.Resources.Screens.Export
 {
@@ -183,8 +181,8 @@ namespace Editor.Resources.Screens.Export
             Debug.Log("Exporting " + prefab.name + " to VRM format...");
 
             // (VRM)을 붙인 이름으로 프리팹 복제
-            var prefabClone = Object.Instantiate(prefab);
-            prefabClone.name = prefabClone.name + "(VRM)";
+            var prefabClone = Instantiate(prefab);
+            prefabClone.name += "(VRM)";
 
             // 저장
             PrefabUtility.SaveAsPrefabAsset(prefabClone, "Assets/Eden/" + prefabClone.name + ".prefab");
@@ -197,6 +195,18 @@ namespace Editor.Resources.Screens.Export
 
             using (var arrayManager = new NativeArrayManager())
             {
+                var selectedItem = EdenStudioInitializer.SelectedItem;
+                var vrmMeta = new VRM10ObjectMeta
+                {
+                    Name = selectedItem.name,
+                    Version = "1.0",
+                    Authors = new List<string> { "Eden Studio" },
+                };
+                ConvertManager.Convert(
+                    savePath,
+                    prefab,
+                    vrmMeta
+                    );
                 var converter = new ModelExporter();
                 var model = converter.Export(arrayManager, prefab);
                
@@ -227,14 +237,7 @@ namespace Editor.Resources.Screens.Export
                 };
                 var exporter = new Vrm10Exporter(new RuntimeTextureSerializer(), gltfExportSettings);
                 var option = new ExportArgs();
-                var selectedItem = EdenStudioInitializer.SelectedItem;
-                var vrmMeta = new VRM10ObjectMeta
-                {
-                    Name = selectedItem.name,
-                    Version = "1.0",
-                    Authors = new List<string> { "Eden Studio" },
-                };
-                exporter.Export(prefab, model, converter, option, vrmMeta);
+                exporter.Export(prefab, model, converter, option);
                 var bytes = exporter.Storage.ToGlbBytes();
                 File.WriteAllBytes(savePath, bytes);
             }

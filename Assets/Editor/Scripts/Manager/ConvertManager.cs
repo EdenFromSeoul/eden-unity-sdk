@@ -36,8 +36,7 @@ namespace Editor.Scripts.Manager
         public static void Convert(
             string path,
             GameObject gameObject,
-            VRM10ObjectMeta vrm10ObjectMeta,
-            IDictionary<ExpressionPreset, VRChatExpressionBinding> expressionBindings)
+            VRM10ObjectMeta vrm10ObjectMeta)
         {
             // Convert the file
             ClearUnusedComponents(gameObject);
@@ -46,8 +45,6 @@ namespace Editor.Scripts.Manager
             var vrm10Instance = gameObject.AddComponent<Vrm10Instance>();
             vrm10Instance.Vrm = ScriptableObject.CreateInstance<VRM10Object>();
             vrm10Instance.Vrm.Meta = vrm10ObjectMeta;
-            // vrm10Instance.Vrm.Expression = expressionBindings;
-            // expressions 별로 vrc expression binding을 vrm expression으로 변환. 옆 80라인 참고바람.
             var shapeKeyNames = gameObject.GetComponentsInChildren<SkinnedMeshRenderer>()
                 .Select(renderer => renderer.sharedMesh)
                 .Where(mesh => mesh)
@@ -56,18 +53,6 @@ namespace Editor.Scripts.Manager
                 .Distinct();
 
             (var animations, var expressionsDict) = VRChat.GetExpressionsFromVRChatAvatar(gameObject, shapeKeyNames);
-
-            // var expressions = new VRM10ObjectExpression();
-            // var aa = ScriptableObject.CreateInstance<VRM10Expression>();
-            //
-            // aa.MorphTargetBindings = new[]
-            //     { new MorphTargetBinding { RelativePath = "Body", Index = 0, Weight = 1.0f } };
-            //
-            // expressions.AddClip(ExpressionPreset.aa, aa);
-            //
-            // expressions.Ih = ScriptableObject.CreateInstance<VRM10Expression>();
-            // expressions.Ih.MorphTargetBindings = new[]
-            //     { new MorphTargetBinding { RelativePath = "Body", Index = 1, Weight = 1.0f } };
 
             foreach (var (preset, expression) in expressionsDict)
             {
