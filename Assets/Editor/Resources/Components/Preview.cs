@@ -1,3 +1,4 @@
+using lilToon;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -24,7 +25,6 @@ namespace Editor.Resources.Components
             _prefabPath = prefabPath;
             _visualTree = UnityEngine.Resources.Load<VisualTreeAsset>("Components/Preview");
         }
-
         public void ShowContent()
         {
             if (!TryLoadPrefab(_prefabPath, out _prefab))
