@@ -9,6 +9,7 @@ using Editor.Scripts.Manager;
 using lilToon;
 using Runtime;
 using UniGLTF;
+using UniGLTF.MeshUtility;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -21,6 +22,25 @@ namespace Editor.Resources.Screens.Export
 {
     public class Export : EditorWindow
     {
+        class TempDisposable : IDisposable
+        {
+            private List<UnityEngine.Object> _disposables = new();
+            
+            public void Add(UnityEngine.Object obj)
+            {
+                _disposables.Add(obj);
+            }
+            
+            public void Dispose()
+            {
+                foreach (var obj in _disposables)
+                {
+                    DestroyImmediate(obj);
+                }
+                _disposables.Clear();
+            }
+        }
+        
         [SerializeField] private VisualTreeAsset m_VisualTreeAsset;
         private static VisualElement _container;
         private static ScrollView _scrollView;
@@ -193,6 +213,7 @@ namespace Editor.Resources.Screens.Export
             //prefab의 material들의 셰이더를 Mtoon으로 변환
             ChangeMaterials(prefab, "Assets/Eden/");
 
+            using (var tempDisposable = new TempDisposable())
             using (var arrayManager = new NativeArrayManager())
             {
                 var selectedItem = EdenStudioInitializer.SelectedItem;
@@ -202,11 +223,21 @@ namespace Editor.Resources.Screens.Export
                     Version = "1.0",
                     Authors = new List<string> { "Eden Studio" },
                 };
+                
+                var copy = Instantiate(prefab);
+                tempDisposable.Add(copy);
+                prefab = copy;
+                
                 ConvertManager.Convert(
                     savePath,
                     prefab,
                     vrmMeta
                     );
+
+                // freeze mesh
+                // 왠지 몰라도 노멀라이즈하면 모델이 깨짐. 그래서 일단 주석처리. TODO: 노멀라이즈 수정
+                // var newMeshMap = BoneNormalizer.NormalizeHierarchyFreezeMesh(prefab);
+                // BoneNormalizer.Replace(prefab, newMeshMap, true, true);
                 var converter = new ModelExporter();
                 var model = converter.Export(arrayManager, prefab);
                
@@ -219,6 +250,12 @@ namespace Editor.Resources.Screens.Export
                     if (material == null) continue;
 
                     Texture ShadeTexture = material.GetTexture("_ShadeTexture");
+
+                    // ShadeTexture가 없는 경우 _ShadeTex로
+                    if (ShadeTexture == null)
+                    {
+                        ShadeTexture = material.GetTexture("_ShadeTex");
+                    }
                     
                     // Change the shader
                     material.shader = Shader.Find("VRM10/MToon10");
@@ -229,22 +266,14 @@ namespace Editor.Resources.Screens.Export
                     }
                 }
 
-                var gltfExportSettings = new GltfExportSettings
-                {
-                    UseSparseAccessorForMorphTarget = true,
-                    ExportOnlyBlendShapePosition = true,
-                    DivideVertexBuffer = true
-                };
-                var exporter = new Vrm10Exporter(new RuntimeTextureSerializer(), gltfExportSettings);
+                var gltfExportSettings = new GltfExportSettings();
+                var exporter = new Vrm10Exporter(new EditorTextureSerializer(), gltfExportSettings);
                 var option = new ExportArgs();
                 exporter.Export(prefab, model, converter, option);
                 var bytes = exporter.Storage.ToGlbBytes();
                 File.WriteAllBytes(savePath, bytes);
             }
             
-            // var bytes = Vrm10Exporter.Export(prefab, vrmMeta: new VRM10ObjectMeta() { Name = EdenStudioInitializer.SelectedItem.name });
-                
-            // System.IO.File.WriteAllBytes($"{savePath}.vrm", bytes);
             EditorUtility.DisplayDialog("Exported", "The item has been exported to VRM format.", "OK");
         }
 

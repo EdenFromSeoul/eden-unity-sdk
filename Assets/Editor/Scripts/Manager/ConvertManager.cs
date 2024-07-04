@@ -51,6 +51,7 @@ namespace Editor.Scripts.Manager
                 .SelectMany(mesh => SkinnedMesh.GetAllShapeKeys(mesh, false))
                 .Select(shapeKey => shapeKey.Name)
                 .Distinct();
+            vrm10Instance.SpringBone = new Vrm10InstanceSpringBone();
 
             (var animations, var expressionsDict) = VRChat.GetExpressionsFromVRChatAvatar(gameObject, shapeKeyNames);
 
@@ -63,8 +64,11 @@ namespace Editor.Scripts.Manager
 
             if (sourceAndDestination.GetComponentsInChildren<VRCPhysBone>().Length > 0)
             {
-                VRCPhysBonesToVRMSpringBonesConverter.Convert(sourceAndDestination, sourceAndDestination);
+                // VRCPhysBonesToVRMSpringBonesConverter.Convert(sourceAndDestination, sourceAndDestination);
+                VRCPhysBoneToVRM10SpringBonesConverter.Convert(sourceAndDestination, sourceAndDestination);
             }
+            
+            vrm10Instance.SpringBone.ColliderGroups = gameObject.GetComponentsInChildren<VRM10SpringBoneColliderGroup>().ToList();
 
 
             RemoveUnusedColliderGroups(gameObject);
