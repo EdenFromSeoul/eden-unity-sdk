@@ -1,13 +1,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using Editor.Scripts.Util;
-using Esperecyan.Unity.VRMConverterForVRChat.VRChatToVRM;
-using Esperecyan.UniVRMExtensions.SwayingObjects;
 using UnityEngine;
 using UniVRM10;
 using VRC.SDK3.Dynamics.PhysBone.Components;
 using VRM;
-using ExpressionPreset = UniVRM10.ExpressionPreset;
 
 namespace Editor.Scripts.Manager
 {
@@ -64,12 +61,10 @@ namespace Editor.Scripts.Manager
 
             if (sourceAndDestination.GetComponentsInChildren<VRCPhysBone>().Length > 0)
             {
-                // VRCPhysBonesToVRMSpringBonesConverter.Convert(sourceAndDestination, sourceAndDestination);
                 VRCPhysBoneToVRM10SpringBonesConverter.Convert(sourceAndDestination, sourceAndDestination);
             }
             
             vrm10Instance.SpringBone.ColliderGroups = gameObject.GetComponentsInChildren<VRM10SpringBoneColliderGroup>().ToList();
-
 
             RemoveUnusedColliderGroups(gameObject);
         }

@@ -14,7 +14,7 @@ namespace Editor.Scripts.Util
         internal readonly GameObject Secondary;
 
         private readonly Dictionary<HumanBodyBones, Transform> sourceSkeletonBones;
-        private readonly string? destinationAssetPath;
+        private readonly string? targetAssetPath;
         private readonly int undoGroupIndex;
 
         private bool isDisposed = false;
@@ -27,7 +27,7 @@ namespace Editor.Scripts.Util
             if (TargetIsAsset)
             {
                 TargetGameObject = PrefabUtility.LoadPrefabContents(AssetDatabase.GetAssetPath(TargetGameObject));
-                destinationAssetPath = PrefabUtility.GetPrefabAssetPathOfNearestInstanceRoot(targetAnimator);
+                targetAssetPath = PrefabUtility.GetPrefabAssetPathOfNearestInstanceRoot(targetAnimator);
             }
             else
             {
@@ -72,7 +72,12 @@ namespace Editor.Scripts.Util
 
         public void SaveAsset()
         {
-            // TODO implement this method
+            if (!TargetIsAsset)
+            {
+                return;
+            }
+
+            PrefabUtility.SaveAsPrefabAsset(TargetGameObject, targetAssetPath);
         }
 
         public void Dispose()
