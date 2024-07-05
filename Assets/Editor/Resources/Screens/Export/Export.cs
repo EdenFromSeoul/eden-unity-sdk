@@ -208,7 +208,10 @@ namespace Editor.Resources.Screens.Export
                     var material = VARIABLE as Material;
                     if (material == null) continue;
 
-                    Texture ShadeTexture = material.GetTexture("_ShadeTexture");
+                    var ShadeTexture = material.GetTexture("_ShadeTexture");
+                    var RimColor = material.GetColor("_RimColor");
+                    var SphereAdd = material.GetTexture("_SphereAdd");
+                    var OutlineColor = material.GetColor("_OutlineColor");
                     
                     // Change the shader
                     material.shader = Shader.Find("VRM10/MToon10");
@@ -216,6 +219,21 @@ namespace Editor.Resources.Screens.Export
                     if (material.HasProperty("_ShadeTex"))
                     {
                         material.SetTexture("_ShadeTex", ShadeTexture);
+                    }
+
+                    if (material.HasProperty("_RimColor"))
+                    {
+                        material.SetColor("_RimColor", RimColor);
+                    }
+
+                    if (material.HasProperty("_SphereAdd"))
+                    {
+                        material.SetTexture("_SphereAdd", SphereAdd);
+                    }
+
+                    if (material.HasProperty("_OutlineColor"))
+                    {
+                        material.SetColor("_OutlineColor", OutlineColor);
                     }
                 }
 
