@@ -248,34 +248,40 @@ namespace Editor.Resources.Screens.Export
                 {
                     var material = VARIABLE as Material;
                     if (material == null) continue;
-
+                
                     var ShadeTexture = material.GetTexture("_ShadeTexture");
-                    var RimColor = material.GetColor("_RimColor");
-                    var SphereAdd = material.GetTexture("_SphereAdd");
-                    var OutlineColor = material.GetColor("_OutlineColor");
+                    // var RimColor = material.GetColor("_RimColor");
+                    // var SphereAdd = material.GetTexture("_SphereAdd");
+                    // var OutlineColor = material.GetColor("_OutlineColor");
+                    
+                    // ShadeTexture가 없는 경우 (일반적으로 lilToon이 아닌 경우)는 MainTex를 사용
+                    if (ShadeTexture == null)
+                    {
+                        ShadeTexture = material.GetTexture("_MainTex");
+                    }
                     
                     // Change the shader
                     material.shader = Shader.Find("VRM10/MToon10");
-
+                
                     if (material.HasProperty("_ShadeTex"))
                     {
                         material.SetTexture("_ShadeTex", ShadeTexture);
                     }
-
-                    if (material.HasProperty("_RimColor"))
-                    {
-                        material.SetColor("_RimColor", RimColor);
-                    }
-
-                    if (material.HasProperty("_SphereAdd"))
-                    {
-                        material.SetTexture("_SphereAdd", SphereAdd);
-                    }
-
-                    if (material.HasProperty("_OutlineColor"))
-                    {
-                        material.SetColor("_OutlineColor", OutlineColor);
-                    }
+                
+                    // if (material.HasProperty("_RimColor"))
+                    // {
+                    //     material.SetColor("_RimColor", RimColor);
+                    // }
+                    //
+                    // if (material.HasProperty("_SphereAdd"))
+                    // {
+                    //     material.SetTexture("_SphereAdd", SphereAdd);
+                    // }
+                    //
+                    // if (material.HasProperty("_OutlineColor"))
+                    // {
+                    //     material.SetColor("_OutlineColor", OutlineColor);
+                    // }
                 }
 
                 var gltfExportSettings = new GltfExportSettings();
