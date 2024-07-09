@@ -30,6 +30,14 @@
     --black-selected: #000000;
 }
 
+TemplateContainer {
+    flex-grow: 1;
+}
+
+TemplateContainer > VisualElement {
+    flex-grow: 1;
+}
+
 VisualElement {
     transition-duration: 0.2s;
     transition-property: background-color, color, border-color;
@@ -37,6 +45,18 @@ VisualElement {
 }
 
 Button {
+    padding: 6px 16px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-width: 0;
+    border-radius: 4px;
+    background-color: white;
+    color: var(--black);
+    -unity-font-style: normal;
+}
+
+DropdownField {
     padding: 6px 16px;
     flex-direction: column;
     align-items: center;

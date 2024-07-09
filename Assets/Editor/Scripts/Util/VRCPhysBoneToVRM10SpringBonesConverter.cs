@@ -18,10 +18,12 @@ namespace Editor.Scripts.Util
         {
             return new VRM10SpringBoneParameters
             {
-                StiffnessForce = vrcPhysBoneParameters.Stiffness,
-                GravityPower = vrcPhysBoneParameters.Gravity,
-                GravityDir = new Vector3(0, -1.0f, 0),
-                DragForce = 0.4f,
+                StiffnessForce = vrcPhysBoneParameters.Pull * 4.0f,
+                // 중력의 절대값 * 2
+                GravityPower = Math.Abs(vrcPhysBoneParameters.Gravity) * 2.0f,
+                // 중력 방향은 Gravity 값의 부호에 따라 달라짐 (Gravity가 음수면 위 방향, 양수면 아래 방향)
+                GravityDir = new Vector3(0, vrcPhysBoneParameters.Gravity > 0 ? -1.0f : 1.0f, 0),
+                DragForce = vrcPhysBoneParameters.Spring,
                 JointRadius = 0.02f
             };
         }
@@ -95,21 +97,41 @@ namespace Editor.Scripts.Util
         {
             var targetCollider = targetBone.gameObject.AddComponent<VRM10SpringBoneCollider>();
 
-            targetCollider.ColliderType = sourceCollider.shapeType switch
+            switch (sourceCollider.shapeType)
             {
-                VRCPhysBoneColliderBase.ShapeType.Sphere => VRM10SpringBoneColliderTypes.Sphere,
-                VRCPhysBoneColliderBase.ShapeType.Capsule => VRM10SpringBoneColliderTypes.Capsule,
-                VRCPhysBoneColliderBase.ShapeType.Plane => VRM10SpringBoneColliderTypes.Plane,
-                _ => throw new ArgumentOutOfRangeException()
-            };
+                case VRCPhysBoneColliderBase.ShapeType.Sphere:
+                    if (sourceCollider.insideBounds)
+                    {
+                        targetCollider.ColliderType = VRM10SpringBoneColliderTypes.SphereInside;
+                    } else
+                    {
+                        targetCollider.ColliderType = VRM10SpringBoneColliderTypes.Sphere;
+                    }
+                    break;
+                case VRCPhysBoneColliderBase.ShapeType.Capsule:
+                    if (sourceCollider.insideBounds)
+                    {
+                        targetCollider.ColliderType = VRM10SpringBoneColliderTypes.CapsuleInside;
+                    } else
+                    {
+                        targetCollider.ColliderType = VRM10SpringBoneColliderTypes.Capsule;
+                    }
+                    break;
+                case VRCPhysBoneColliderBase.ShapeType.Plane:
+                    targetCollider.ColliderType = VRM10SpringBoneColliderTypes.Plane;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
 
-            targetCollider.Offset = sourceCollider.position;
+            targetCollider.Offset = sourceCollider.position / 2.0f;
             targetCollider.Radius = sourceCollider.radius;
 
             switch (sourceCollider.shapeType)
             {
                 case VRCPhysBoneColliderBase.ShapeType.Capsule:
                 {
+                    // tail은 position 과 rotation, height를 이용해서 계산
                     var capsuleTail = sourceCollider.position +
                                       sourceCollider.rotation * Vector3.up * sourceCollider.height;
                     targetCollider.Tail = capsuleTail;
@@ -241,34 +263,37 @@ namespace Editor.Scripts.Util
                          })
                          .GroupBy(tuple => tuple.compare))
             {
-                var vrcPhysBone = vrcPhysBones.First();
-                Debug.Log($"Name: {vrcPhysBone.vrcPhysBone.transform.name}\n" +
-                          $"Parameters: {vrcPhysBone.parameters}\n" +
-                          $"ColliderGroups: {vrcPhysBone.targetColliderGroups.Count}");
-
-                // joint는 VRCPhysBone이 있는 위치에 추가해야함
-                var newJoint = vrcPhysBone.vrcPhysBone.gameObject.AddComponent<VRM10SpringBoneJoint>();
-
-                newJoint.m_stiffnessForce = vrcPhysBone.parameters.StiffnessForce;
-                newJoint.m_gravityPower = vrcPhysBone.parameters.GravityPower;
-                newJoint.m_gravityDir = vrcPhysBone.parameters.GravityDir;
-                newJoint.m_dragForce = vrcPhysBone.parameters.DragForce;
-                newJoint.m_jointRadius = vrcPhysBone.parameters.JointRadius;
-                // transform name으로 검색 없으면 spring 생성
-                var spring =
-                    targetInstance.SpringBone.Springs.Find(spring =>
-                        spring.Name == vrcPhysBone.vrcPhysBone.transform.name);
-
-
-                if (spring == null)
+                foreach (var vrcPhysBone in vrcPhysBones)
                 {
-                    spring = new Vrm10InstanceSpringBone.Spring(vrcPhysBone.vrcPhysBone.transform.name);
-                    targetInstance.SpringBone.Springs.Add(spring);
+                    // Debug.Log(vrcPhys1.vrcPhysBone.transform.RelativePathFrom(converter.SourceGameObject.transform));
+
+                    // joint는 VRCPhysBone이 있는 위치에 추가해야함
+                    var newJoint = vrcPhysBone.vrcPhysBone.gameObject.AddComponent<VRM10SpringBoneJoint>();
+
+                    newJoint.m_stiffnessForce = vrcPhysBone.parameters.StiffnessForce;
+                    newJoint.m_gravityPower = vrcPhysBone.parameters.GravityPower;
+                    newJoint.m_gravityDir = vrcPhysBone.parameters.GravityDir;
+                    newJoint.m_dragForce = vrcPhysBone.parameters.DragForce;
+                    newJoint.m_jointRadius = vrcPhysBone.parameters.JointRadius;
+                    // transform name으로 검색 없으면 spring 생성
+                    var spring =
+                        targetInstance.SpringBone.Springs.Find(spring =>
+                            spring.Name == vrcPhysBone.vrcPhysBone.transform.name);
+
+
+                    if (spring == null)
+                    {
+                        spring = new Vrm10InstanceSpringBone.Spring(vrcPhysBone.vrcPhysBone.transform.name);
+                        targetInstance.SpringBone.Springs.Add(spring);
+                    }
+
+                    spring.ColliderGroups.AddRange(vrcPhysBone.targetColliderGroups);
+
+                    AddJointRecursive(vrcPhysBone.vrcPhysBone.transform, newJoint, spring);
                 }
 
-                spring.ColliderGroups.AddRange(vrcPhysBone.targetColliderGroups);
+                // var vrcPhysBone = vrcPhysBones.First();
 
-                AddJointRecursive(vrcPhysBone.vrcPhysBone.transform, newJoint, spring);
             }
         }
 

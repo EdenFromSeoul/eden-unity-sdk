@@ -1,0 +1,33 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/Editor/Resources/tailwind.uss?fileID=7433441132597879392&amp;guid=48681c69885bd422291d631bbbade4b9&amp;type=3#tailwind" />
+    <Style src="project://database/Assets/Editor/Resources/style.uss?fileID=7433441132597879392&amp;guid=3c7bc3f0f7d424845a31e1b7bc157f45&amp;type=3#style" />
+    <ui:VisualElement name="header" class="mb-2" style="flex-grow: 0;">
+        <ui:VisualElement style="flex-grow: initial; flex-direction: row;">
+            <ui:VisualElement style="flex-grow: initial; flex-direction: row-reverse; align-self: auto; align-items: flex-start; flex-wrap: nowrap;">
+                <ui:Label tabindex="-1" text="VRM 내보내기 설정" parse-escape-sequences="true" display-tooltip-when-elided="true" class="text-gray-900" style="font-size: 24px; -unity-font-style: bold;" />
+                <ui:VisualElement style="flex-grow: initial;">
+                    <ui:Button text="&lt;" parse-escape-sequences="true" display-tooltip-when-elided="true" name="backButton" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+            <ui:VisualElement style="flex-grow: 1; flex-direction: row-reverse; align-self: auto; align-items: flex-start;">
+                <ui:VisualElement style="flex-grow: initial;">
+                    <ui:Button text="내보내기" parse-escape-sequences="true" display-tooltip-when-elided="true" name="exportButton" focusable="true" class="primary" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:Label tabindex="-1" text="유니티패키지 파일에서 불러온 프리팹을 관리합니다." parse-escape-sequences="true" display-tooltip-when-elided="true" name="subtitle" class="text-gray-500" />
+    </ui:VisualElement>
+    <ui:VisualElement style="flex-direction: row; flex-grow: 1; flex-shrink: 1;">
+        <ui:VisualElement name="content" class="flex-1" style="flex-grow: 1; -unity-text-align: upper-left;">
+            <ui:VisualElement class="info-block" style="flex-grow: 1;">
+                <ui:Label tabindex="-1" text="정보" parse-escape-sequences="true" display-tooltip-when-elided="true" />
+                <ui:TextField picking-mode="Ignore" label="제목" value="캐릭터의 이름을 입력해주세요" name="TextField" />
+                <ui:TextField picking-mode="Ignore" label="버전" value="버전을 입력해 주세요" name="TextField" />
+                <ui:TextField picking-mode="Ignore" label="제작자" value="자제작자의 이름을 입력해주세요" name="TextField" />
+            </ui:VisualElement>
+            <ui:VisualElement class="info-block" style="flex-grow: 1;" />
+            <ui:Label tabindex="-1" text="감정표현" parse-escape-sequences="true" display-tooltip-when-elided="true" />
+        </ui:VisualElement>
+        <ui:VisualElement name="preview" class="flex-1" style="flex-grow: 1; max-height: 90%;" />
+    </ui:VisualElement>
+</ui:UXML>
