@@ -37,7 +37,17 @@ namespace Editor.Resources
             VisualElement labelFromUXML = m_VisualTreeAsset.Instantiate();
             root.Add(labelFromUXML);
             container = labelFromUXML.Q("container");
-            Export.Show(container);
+            Export.Show(container, OnExportVrmClicked);
+        }
+
+        private void OnExportVrmClicked()
+        {
+            ExportVrm.Show(container, OnBackClicked);
+        }
+
+        private void OnBackClicked()
+        {
+            Export.Show(container, OnExportVrmClicked);
         }
     }
 }

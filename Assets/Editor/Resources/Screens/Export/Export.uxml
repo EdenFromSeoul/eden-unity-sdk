@@ -1,17 +1,25 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
-    <ui:VisualElement name="header" class="mb-2" style="flex-grow: 1;">
+    <Style src="project://database/Assets/Editor/Resources/tailwind.uss?fileID=7433441132597879392&amp;guid=48681c69885bd422291d631bbbade4b9&amp;type=3#tailwind" />
+    <Style src="project://database/Assets/Editor/Resources/style.uss?fileID=7433441132597879392&amp;guid=3c7bc3f0f7d424845a31e1b7bc157f45&amp;type=3#style" />
+    <ui:VisualElement name="header" class="mb-2" style="flex-grow: 0;">
         <ui:VisualElement style="flex-grow: initial; flex-direction: row;">
-            <ui:Label tabindex="-1" text="캐릭터 목록" parse-escape-sequences="true" display-tooltip-when-elided="true" class="text-gray-900" style="font-size: 24px; -unity-font-style: bold;" />
-            <ui:VisualElement style="flex-grow: 1; flex-direction: row-reverse;">
-                <ui:Button text="내보내기" parse-escape-sequences="true" display-tooltip-when-elided="true" name="export-button" class="primary" />
-                <ui:Button text="아이템 가져오기" parse-escape-sequences="true" display-tooltip-when-elided="true" name="import-button" />
+            <ui:Label tabindex="-1" text="프리팹 목록" parse-escape-sequences="true" display-tooltip-when-elided="true" class="text-gray-900" style="font-size: 24px; -unity-font-style: bold;" />
+            <ui:VisualElement style="flex-grow: 1; flex-direction: row-reverse; align-self: auto; align-items: flex-start;">
+                <ui:VisualElement style="flex-grow: initial;">
+                    <ui:Button text="내보내기" parse-escape-sequences="true" display-tooltip-when-elided="true" name="exportButton" class="primary" />
+                    <ui:VisualElement name="exportOptions" style="display: none;">
+                        <ui:Button text=".unitypackage 포맷으로 저장" parse-escape-sequences="true" display-tooltip-when-elided="true" name="exportUpkButton" class="primary" style="border-bottom-right-radius: 0; border-bottom-left-radius: 0;" />
+                        <ui:Button text=".vrm 포맷으로 저장" parse-escape-sequences="true" display-tooltip-when-elided="true" name="exportVrmButton" class="primary" style="align-items: auto; align-self: auto; border-top-left-radius: 0; border-top-right-radius: 0;" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+                <ui:Button text="프리팹 가져오기" parse-escape-sequences="true" display-tooltip-when-elided="true" name="import-button" />
             </ui:VisualElement>
         </ui:VisualElement>
-        <ui:Label tabindex="-1" text="Lorem ipsum" parse-escape-sequences="true" display-tooltip-when-elided="true" name="subtitle" class="text-gray-500" />
+        <ui:Label tabindex="-1" text="유니티패키지 파일에서 불러온 프리팹을 관리합니다." parse-escape-sequences="true" display-tooltip-when-elided="true" name="subtitle" class="text-gray-500" />
     </ui:VisualElement>
-    <ui:VisualElement style="flex-grow: 1; flex-direction: row; max-height: 90%;">
+    <ui:VisualElement style="flex-direction: row; flex-grow: 1; flex-shrink: 1;">
         <ui:VisualElement name="content" class="flex-1" style="flex-grow: 1; -unity-text-align: upper-left;">
-            <ui:ScrollView name="scroll-view" />
+            <ui:ScrollView name="scroll-view" style="min-height: 100%; max-height: 100%;" />
         </ui:VisualElement>
         <ui:VisualElement name="preview" class="flex-1" style="flex-grow: 1;" />
     </ui:VisualElement>
