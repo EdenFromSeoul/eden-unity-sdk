@@ -21,13 +21,34 @@
         <ui:VisualElement name="content" class="flex-1" style="flex-grow: 1; -unity-text-align: upper-left;">
             <ui:VisualElement class="info-block" style="flex-grow: 1;">
                 <ui:Label tabindex="-1" text="정보" parse-escape-sequences="true" display-tooltip-when-elided="true" />
-                <ui:TextField picking-mode="Ignore" label="제목" value="캐릭터의 이름을 입력해주세요" name="TextField" />
-                <ui:TextField picking-mode="Ignore" label="버전" value="버전을 입력해 주세요" name="TextField" />
-                <ui:TextField picking-mode="Ignore" label="제작자" value="자제작자의 이름을 입력해주세요" name="TextField" />
+                <ui:TextField picking-mode="Ignore" label="제목" value="캐릭터의 이름을 입력해주세요" name="nameField" />
+                <ui:TextField picking-mode="Ignore" label="버전" value="버전을 입력해 주세요" name="versionField" />
+                <ui:TextField picking-mode="Ignore" label="제작자" value="자제작자의 이름을 입력해주세요" name="authorField" />
             </ui:VisualElement>
-            <ui:VisualElement class="info-block" style="flex-grow: 1;" />
-            <ui:Label tabindex="-1" text="감정표현" parse-escape-sequences="true" display-tooltip-when-elided="true" />
+            <ui:VisualElement class="info-block" style="flex-grow: 1;">
+                <ui:Label tabindex="-1" text="감정표현" parse-escape-sequences="true" display-tooltip-when-elided="true" />
+                <ui:VisualElement style="flex-grow: 1; flex-direction: row;">
+                    <ui:Label tabindex="-1" text="Happy" parse-escape-sequences="true" display-tooltip-when-elided="true" />
+                    <ui:Button text="Button" parse-escape-sequences="true" display-tooltip-when-elided="true" />
+                </ui:VisualElement>
+                <ui:VisualElement style="flex-grow: 1; flex-direction: row;">
+                    <ui:Label tabindex="-1" text="Angry" parse-escape-sequences="true" display-tooltip-when-elided="true" />
+                    <ui:Button text="Button" parse-escape-sequences="true" display-tooltip-when-elided="true" />
+                </ui:VisualElement>
+                <ui:VisualElement style="flex-grow: 1; flex-direction: row;">
+                    <ui:Label tabindex="-1" text="Sad" parse-escape-sequences="true" display-tooltip-when-elided="true" />
+                    <ui:Button text="Button" parse-escape-sequences="true" display-tooltip-when-elided="true" />
+                </ui:VisualElement>
+                <ui:VisualElement style="flex-grow: 1; flex-direction: row;">
+                    <ui:Label tabindex="-1" text="Relaxed" parse-escape-sequences="true" display-tooltip-when-elided="true" />
+                    <ui:Button text="Button" parse-escape-sequences="true" display-tooltip-when-elided="true" />
+                </ui:VisualElement>
+                <ui:VisualElement style="flex-grow: 1; flex-direction: row;">
+                    <ui:Label tabindex="-1" text="Surprised" parse-escape-sequences="true" display-tooltip-when-elided="true" />
+                    <ui:Button text="Button" parse-escape-sequences="true" display-tooltip-when-elided="true" />
+                </ui:VisualElement>
+            </ui:VisualElement>
         </ui:VisualElement>
-        <ui:VisualElement name="preview" class="flex-1" style="flex-grow: 1; max-height: 90%;" />
+        <ui:VisualElement name="preview" class="flex-1" style="flex-grow: 2; max-height: 90%;" />
     </ui:VisualElement>
 </ui:UXML>

@@ -43,10 +43,12 @@ namespace Editor.Resources.Screens.Export
 
         [SerializeField] private VisualTreeAsset m_VisualTreeAsset;
         private static VisualElement _container;
-        private static List<ItemInfo> _items;
         private static Button _exportButton;
         private static Button _backButton;
         private static Button _exportVrmButton;
+        private static TextField _nameField;
+        private static TextField _authorField;
+        private static TextField _versionField;
         private static Preview _preview;
 
         public static void Show(VisualElement root, Action onBackClicked)
@@ -62,6 +64,10 @@ namespace Editor.Resources.Screens.Export
             _backButton.clicked += onBackClicked;
             _preview = new Preview(_container.Q("preview"), EdenStudioInitializer.SelectedItem?.path ?? "");
             _preview.ShowContent();
+
+            _nameField = _container.Q<TextField>("nameField");
+            _authorField = _container.Q<TextField>("authorField");
+            _versionField = _container.Q<TextField>("versionField");
 
             EdenStudioInitializer.OnSelectedItemChanged += OnSelectedItemChanged;
 
@@ -197,9 +203,9 @@ namespace Editor.Resources.Screens.Export
                 var selectedItem = EdenStudioInitializer.SelectedItem;
                 var vrmMeta = new VRM10ObjectMeta
                 {
-                    Name = selectedItem.name,
-                    Version = "1.0",
-                    Authors = new List<string> { "Eden Studio" },
+                    Name = _nameField.value,
+                    Version = _versionField.value,
+                    Authors = new List<string> { _authorField.value },
                 };
 
                 var copy = Instantiate(prefab);
@@ -214,8 +220,8 @@ namespace Editor.Resources.Screens.Export
 
                 // freeze mesh
                 // 왠지 몰라도 노멀라이즈하면 모델이 깨짐. 그래서 일단 주석처리. TODO: 노멀라이즈 수정
-                var newMeshMap = BoneNormalizer.NormalizeHierarchyFreezeMesh(prefab);
-                BoneNormalizer.Replace(prefab, newMeshMap, true, true);
+                // var newMeshMap = BoneNormalizer.NormalizeHierarchyFreezeMesh(prefab);
+                // BoneNormalizer.Replace(prefab, newMeshMap, true, true);
                 var converter = new ModelExporter();
                 var model = converter.Export(arrayManager, prefab);
 

@@ -1,33 +1,33 @@
 :root {
     background-color: white;
-    --primary: #006FEE;
-    --primary-hover: #338ef7;
-    --primary-active: #66aaf9;
-    --primary-selected: #005bc4;
-    --secondary: #7828c8;
-    --secondary-hover: #9353d3;
-    --secondary-active: #ae7ede;
-    --secondary-selected: #6020a0;
-    --default: #d4d4d8;
-    --default-hover: #dddde0;
-    --default-active: #e4e4e7;
-    --default-selected: #a1a1aa;
-    --warning: #f5a524;
-    --warning-hover: #f7b750;
-    --warning-active: #f9c97c;
-    --warning-selected: #c4841d;
-    --success: #17C964;
-    --success-hover: #43d589;
-    --success-active: #6ee1ae;
-    --success-selected: #0faa4d;
-    --danger: #f31260;
-    --danger-hover: #f5337f;
-    --danger-active: #f7549f;
-    --danger-selected: #c10f4e;
-    --black: #000000;
-    --black-hover: #1a1a1a;
-    --black-active: #333333;
-    --black-selected: #000000;
+    --primary: rgb(0, 111, 238);
+    --primary-hover: rgb(51, 142, 247);
+    --primary-active: rgb(102, 170, 249);
+    --primary-selected: rgb(0, 91, 196);
+    --secondary: rgb(120, 40, 200);
+    --secondary-hover: rgb(147, 83, 211);
+    --secondary-active: rgb(174, 126, 222);
+    --secondary-selected: rgb(96, 32, 160);
+    --default: rgb(212, 212, 216);
+    --default-hover: rgb(221, 221, 224);
+    --default-active: rgb(228, 228, 231);
+    --default-selected: rgb(161, 161, 170);
+    --warning: rgb(245, 165, 36);
+    --warning-hover: rgb(247, 183, 80);
+    --warning-active: rgb(249, 201, 124);
+    --warning-selected: rgb(196, 132, 29);
+    --success: rgb(23, 201, 100);
+    --success-hover: rgb(67, 213, 137);
+    --success-active: rgb(110, 225, 174);
+    --success-selected: rgb(15, 170, 77);
+    --danger: rgb(243, 18, 96);
+    --danger-hover: rgb(245, 51, 127);
+    --danger-active: rgb(247, 84, 159);
+    --danger-selected: rgb(193, 15, 78);
+    --black: rgb(0, 0, 0);
+    --black-hover: rgb(26, 26, 26);
+    --black-active: rgb(51, 51, 51);
+    --black-selected: rgb(0, 0, 0);
 }
 
 TemplateContainer {
@@ -135,7 +135,6 @@ ItemButton Label {
     color: var(--black);
 }
 
-/* Selection and Pinning Styles */
 .selected {
     background-color: var(--primary);
     border-color: var(--primary);
