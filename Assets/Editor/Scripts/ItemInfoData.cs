@@ -1,7 +1,8 @@
 using System;
 using System.Collections.Generic;
+using Editor.Scripts.Struct;
 
-namespace Runtime
+namespace Editor.Scripts
 {
     [Serializable]
     public class ItemInfoData
@@ -17,6 +18,7 @@ namespace Runtime
         public ModelSlot slot;
         public ModelStatus status;
         public string preview; // base64 encoded string for the texture
+        public Dictionary<string, List<BlendShapeData>> SelectedBlendShapes;
     }
 
     [Serializable]

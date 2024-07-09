@@ -23,6 +23,7 @@ namespace Editor.Scripts.Util
         public AnimationCurve? GravityCurve = null;
         public float GravityFalloff = 0;
         public AnimationCurve? GravityFalloffCurve = null;
+        public float Radius = 0.1f;
 #if VRC_SDK_VRCSDK3
         public VRCPhysBoneBase.ImmobileType ImmobileType;
 #endif

@@ -24,7 +24,7 @@ namespace Editor.Scripts.Util
                 // 중력 방향은 Gravity 값의 부호에 따라 달라짐 (Gravity가 음수면 위 방향, 양수면 아래 방향)
                 GravityDir = new Vector3(0, vrcPhysBoneParameters.Gravity > 0 ? -1.0f : 1.0f, 0),
                 DragForce = vrcPhysBoneParameters.Spring,
-                JointRadius = 0.02f
+                JointRadius = vrcPhysBoneParameters.Radius,
             };
         }
 
@@ -131,9 +131,9 @@ namespace Editor.Scripts.Util
             {
                 case VRCPhysBoneColliderBase.ShapeType.Capsule:
                 {
-                    // tail은 position 과 rotation, height를 이용해서 계산
-                    var capsuleTail = sourceCollider.position +
-                                      sourceCollider.rotation * Vector3.up * sourceCollider.height;
+                    targetCollider.Offset = (sourceCollider.position - sourceCollider.rotation * Vector3.up * sourceCollider.height / 2.0f) / 2.0f;
+                    // tail은 포지션에서 height / 2 를 더한 값
+                    var capsuleTail = (sourceCollider.position + sourceCollider.rotation * Vector3.up * sourceCollider.height / 2.0f) / 2.0f;
                     targetCollider.Tail = capsuleTail;
                     break;
                 }
@@ -187,6 +187,7 @@ namespace Editor.Scripts.Util
                                  Gravity = vrcPhysBone.gravity,
                                  GravityFalloff = vrcPhysBone.gravityFalloff,
                                  GravityFalloffCurve = vrcPhysBone.gravityFalloffCurve,
+                                 Radius = vrcPhysBone.radius,
 #if VRC_SDK_VRCSDK3
                                  ImmobileType = vrcPhysBone.immobileType,
 #endif
@@ -265,8 +266,6 @@ namespace Editor.Scripts.Util
             {
                 foreach (var vrcPhysBone in vrcPhysBones)
                 {
-                    // Debug.Log(vrcPhys1.vrcPhysBone.transform.RelativePathFrom(converter.SourceGameObject.transform));
-
                     // joint는 VRCPhysBone이 있는 위치에 추가해야함
                     var newJoint = vrcPhysBone.vrcPhysBone.gameObject.AddComponent<VRM10SpringBoneJoint>();
 
@@ -291,9 +290,6 @@ namespace Editor.Scripts.Util
 
                     AddJointRecursive(vrcPhysBone.vrcPhysBone.transform, newJoint, spring);
                 }
-
-                // var vrcPhysBone = vrcPhysBones.First();
-
             }
         }
 

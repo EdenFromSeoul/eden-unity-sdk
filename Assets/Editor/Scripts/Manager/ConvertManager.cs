@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Editor.Scripts.Struct;
 using Editor.Scripts.Util;
 using UnityEngine;
 using UniVRM10;
@@ -33,7 +34,8 @@ namespace Editor.Scripts.Manager
         public static void Convert(
             string path,
             GameObject gameObject,
-            VRM10ObjectMeta vrm10ObjectMeta)
+            VRM10ObjectMeta vrm10ObjectMeta,
+            IDictionary<string, List<BlendShapeData>> selectedBlendShapes)
         {
             // Convert the file
             ClearUnusedComponents(gameObject);
@@ -50,7 +52,7 @@ namespace Editor.Scripts.Manager
                 .Distinct();
             vrm10Instance.SpringBone = new Vrm10InstanceSpringBone();
 
-            (var animations, var expressionsDict) = VRChat.GetExpressionsFromVRChatAvatar(gameObject, shapeKeyNames);
+            (var animations, var expressionsDict) = VRChat.GetExpressionsFromVRChatAvatar(gameObject, shapeKeyNames, selectedBlendShapes);
 
             foreach (var (preset, expression) in expressionsDict)
             {

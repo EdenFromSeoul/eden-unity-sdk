@@ -148,6 +148,51 @@ ItemButton Label {
     background-color: var(--primary-hover);
 }
 
+TextField {
+    padding: 6px 16px;
+    border-color: var(--default);
+    background-color: white;
+    color: var(--black);
+    -unity-font-style: normal;
+}
+
+TextField Label {
+    color: var(--black);
+    -unity-font-style: bold;
+}
+
+TextField TextInput {
+    padding: 6px 16px;
+    color: var(--black);
+    background-color: white;
+    border-color: var(--default);
+}
+
+TextField TextInput:hover {
+    border-color: var(--default-hover);
+}
+
+TextField TextInput:active {
+    border-color: var(--default-active);
+}
+
+TextField:hover {
+    border-color: var(--default-hover);
+}
+
+TextField:active {
+    border-color: var(--default-active);
+}
+
+TextField:focus {
+    border-color: var(--primary);
+}
+
+TextField:disabled {
+    background-color: var(--default);
+    color: var(--black-selected);
+}
+
 #import-button {
     margin-right: 8px;
 }

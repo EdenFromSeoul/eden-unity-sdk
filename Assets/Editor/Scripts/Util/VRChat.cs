@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Editor.Scripts.Struct;
 using UnityEngine;
 using UniVRM10;
 using VRC.SDK3.Avatars.Components;
@@ -29,12 +30,22 @@ namespace Editor.Scripts.Util
                 { ExpressionPreset.oh, 13 },
             };
 
+        static readonly IDictionary<string, ExpressionPreset> ExpressionPresetCustomDict =
+            new Dictionary<string, ExpressionPreset>
+            {
+                {"happy", ExpressionPreset.happy},
+                {"sad", ExpressionPreset.sad},
+                {"angry", ExpressionPreset.angry},
+                {"relaxed", ExpressionPreset.relaxed},
+                {"surprised", ExpressionPreset.surprised},
+            };
+
         // regex of blink estimated shape key name
         private static readonly Regex BlinkShapeKeyRegex = new("blink|まばたき|またたき|瞬き|eye|目|瞳|眼|wink|ウィンク|ｳｨﾝｸ|ウインク|ｳｲﾝｸ",
             RegexOptions.IgnoreCase);
 
         internal static (IEnumerable<AnimationClip> clips, IDictionary<ExpressionPreset, VRM10Expression> expressions)
-            GetExpressionsFromVRChatAvatar(GameObject gameObject, IEnumerable<string> shapeKeyNames)
+            GetExpressionsFromVRChatAvatar(GameObject gameObject, IEnumerable<string> shapeKeyNames, IDictionary<string, List<BlendShapeData>> selectedBlendShapes)
         {
             var clips = new List<AnimationClip>();
             var expressions = new Dictionary<ExpressionPreset, VRM10Expression>();
@@ -69,6 +80,7 @@ namespace Editor.Scripts.Util
             }
 
             GetBlinkExpressionsFromVRChatAvatar(gameObject, shapeKeyNamesList, expressions);
+            GetOtherExpressions(gameObject, expressions, selectedBlendShapes);
 
             return (clips, expressions);
         }
@@ -119,6 +131,25 @@ namespace Editor.Scripts.Util
 
             var blinkShapeKeyNames = GetBlinkShapeKeyNames(shapeKeyNamesList);
             Debug.Log(string.Join(", ", blinkShapeKeyNames));
+        }
+
+        private static void GetOtherExpressions(GameObject gameObject,
+            IDictionary<ExpressionPreset, VRM10Expression> expressions,
+            IDictionary<string, List<BlendShapeData>> selectedBlendShapes)
+        {
+            // selectedBlendShapes 에 있는 것들을 추가
+            foreach (var selected in selectedBlendShapes)
+            {
+                var expressionPreset = ExpressionPresetCustomDict[selected.Key];
+                var expression = ScriptableObject.CreateInstance<VRM10Expression>();
+                expression.MorphTargetBindings = selected.Value.Select(data =>
+                    new MorphTargetBinding
+                    {
+                        RelativePath = "Body", Index = data.index, Weight = 1.0f
+                    }).ToArray();
+
+                expressions.Add(expressionPreset, expression);
+            }
         }
     }
 }
