@@ -395,7 +395,7 @@ namespace Editor.Resources.Screens.Export
                     savePath,
                     prefab,
                     vrmMeta,
-                    selectedItem.SelectedBlendShapes
+                    selectedBlendShapes
                 );
 
                 // freeze mesh
