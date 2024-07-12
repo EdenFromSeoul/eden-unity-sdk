@@ -327,7 +327,10 @@ namespace Editor.Scripts.Util
 
             if (transform.childCount > 0)
             {
-                AddJointRecursive(transform.GetChild(0), sourceJoint, spring);
+                foreach (Transform child in transform)
+                {
+                    AddJointRecursive(child, sourceJoint, spring);
+                }
             }
         }
     }
