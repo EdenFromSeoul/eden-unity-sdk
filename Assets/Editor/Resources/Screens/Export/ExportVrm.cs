@@ -167,7 +167,7 @@ namespace Editor.Resources.Screens.Export
                 _expressionScrollView.Add(newBlendShapeItem);
             })
             {
-                text = "추가"
+                text = "쉐이프키 추가하기"
             };
             _expressionScrollView.Add(addButton);
             _expressionPanel.style.display = DisplayStyle.Flex;

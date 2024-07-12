@@ -16,15 +16,24 @@ namespace Editor.Scripts.Util
 
         private static VRM10SpringBoneParameters DefaultParametersConverter(VRCPhysBoneParameters vrcPhysBoneParameters)
         {
+            var stiffness = vrcPhysBoneParameters.Spring * 2.0f;
+            var drag = vrcPhysBoneParameters.Stiffness * 4.0f;
+            var gravity = 0.0f;
+
+            if (vrcPhysBoneParameters.Gravity != 0)
+            {
+                stiffness = (vrcPhysBoneParameters.Spring / (vrcPhysBoneParameters.Gravity + 1)) * 2.0f;
+                gravity = vrcPhysBoneParameters.Gravity * vrcPhysBoneParameters.Pull;
+            }
+
             return new VRM10SpringBoneParameters
             {
-                StiffnessForce = vrcPhysBoneParameters.Pull * 4.0f,
-                // 중력의 절대값 * 2
-                GravityPower = Math.Abs(vrcPhysBoneParameters.Gravity) * 2.0f,
+                StiffnessForce = stiffness,
+                GravityPower = Math.Abs(gravity),
                 // 중력 방향은 Gravity 값의 부호에 따라 달라짐 (Gravity가 음수면 위 방향, 양수면 아래 방향)
-                GravityDir = new Vector3(0, vrcPhysBoneParameters.Gravity > 0 ? -1.0f : 1.0f, 0),
-                DragForce = vrcPhysBoneParameters.Spring,
-                JointRadius = vrcPhysBoneParameters.Radius,
+                GravityDir = new Vector3(0, gravity >= 0 ? -1.0f : 1.0f, 0),
+                DragForce = drag,
+                JointRadius = vrcPhysBoneParameters.Radius * 0.8f,
             };
         }
 
@@ -125,7 +134,7 @@ namespace Editor.Scripts.Util
             }
 
             targetCollider.Offset = sourceCollider.position / 2.0f;
-            targetCollider.Radius = sourceCollider.radius;
+            targetCollider.Radius = sourceCollider.radius * 0.5f;
 
             switch (sourceCollider.shapeType)
             {

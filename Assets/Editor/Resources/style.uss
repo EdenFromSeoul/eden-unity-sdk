@@ -160,6 +160,27 @@ ItemButton Label {
     max-width: 250px;
 }
 
+.info-block .title {
+    margin-bottom: 8px;
+    color: var(--gray-500);
+}
+
+.expression-item Label {
+    margin-bottom: 4px;
+    color: var(--black);
+    align-self: center;
+}
+
+.expression-item Button {
+    padding: 6px 16px;
+    border-width: 1px;
+    border-radius: 4px;
+    border-color: var(--primary);
+    background-color: white;
+    color: var(--black);
+    -unity-font-style: normal;
+}
+
 .blend-shape-item {
     flex-direction: row;
     justify-content: space-between;
@@ -254,6 +275,7 @@ TextField:disabled {
 }
 
 #expressionPanel {
+    padding: 16px;
     background-color: var(--gray-50);
     border-radius: 4px;
     border-color: #DFE4EA;
