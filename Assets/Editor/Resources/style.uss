@@ -56,6 +56,12 @@ Button {
     -unity-font-style: normal;
 }
 
+.tab-button {
+    background-color: white;
+    color: var(--black);
+    -unity-font-style: normal;
+}
+
 DropdownField {
     padding: 6px 16px;
     flex-direction: column;
@@ -148,8 +154,43 @@ ItemButton Label {
     background-color: var(--primary-hover);
 }
 
-TextField {
+.fixed-width {
+    min-width: 250px;
+    width: 250px;
+    max-width: 250px;
+}
+
+.blend-shape-item {
+    flex-direction: row;
+    justify-content: space-between;
+    background-color: var(--gray-50);
+}
+
+.blend-shape-item DropdownField {
+    width: 100%;
+    align-items: flex-start;
+    background-color: var(--gray-50);
+}
+
+.blend-shape-item DropdownField Label {
+    margin-bottom: 4px;
+    color: var(--black);
+    background-color: var(--gray-50);
+}
+
+.blend-shape-item DropdownField VisualElement {
+    background-color: white;
+    border-color: var(--default);
     padding: 6px 16px;
+}
+
+.blend-shape-item DropdownField VisualElement PopupTextElement {
+    color: var(--black);
+    background-color: white;
+}
+
+TextField {
+    padding: 6px 0;
     border-color: var(--default);
     background-color: white;
     color: var(--black);
@@ -158,7 +199,7 @@ TextField {
 
 TextField Label {
     color: var(--black);
-    -unity-font-style: bold;
+    margin-bottom: 4px;
 }
 
 TextField TextInput {
@@ -193,6 +234,29 @@ TextField:disabled {
     color: var(--black-selected);
 }
 
+#container {
+    flex-grow: 1;
+    padding: 16px;
+    background-color: var(--gray-100);
+}
+
+#content {
+    flex-grow: 1;
+    padding: 16px;
+    background-color: white;
+    border-radius: 4px;
+    border-color: #DFE4EA;
+    border-width: 1px;
+}
+
 #import-button {
     margin-right: 8px;
+}
+
+#expressionPanel {
+    background-color: var(--gray-50);
+    border-radius: 4px;
+    border-color: #DFE4EA;
+    border-width: 1px;
+    border-left-width: 0;
 }

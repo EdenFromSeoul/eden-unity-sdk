@@ -18,7 +18,7 @@
         <ui:Label tabindex="-1" text="유니티패키지 파일에서 불러온 프리팹을 관리합니다." parse-escape-sequences="true" display-tooltip-when-elided="true" name="subtitle" class="text-gray-500" />
     </ui:VisualElement>
     <ui:VisualElement style="flex-direction: row; flex-grow: 1; flex-shrink: 1;">
-        <ui:VisualElement name="content" class="flex-1" style="flex-grow: 1; -unity-text-align: upper-left; flex-direction: row; flex-wrap: nowrap; flex-shrink: 1;">
+        <ui:VisualElement name="content" class="flex-1 fixed-width" style="flex-grow: 1; -unity-text-align: upper-left; flex-direction: row; flex-wrap: nowrap; flex-shrink: 1;">
             <ui:VisualElement style="flex-grow: 1; flex-direction: column-reverse; flex-wrap: wrap;">
                 <ui:VisualElement class="info-block" style="flex-grow: 1;">
                     <ui:Label tabindex="-1" text="감정표현" parse-escape-sequences="true" display-tooltip-when-elided="true" />
@@ -51,7 +51,7 @@
                 </ui:VisualElement>
             </ui:VisualElement>
         </ui:VisualElement>
-        <ui:VisualElement name="expressionPanel" style="flex-grow: 1; flex-direction: column; flex-wrap: wrap; display: none; flex-shrink: 1;">
+        <ui:VisualElement name="expressionPanel" class="fixed-width" style="flex-grow: 1; flex-direction: column; flex-wrap: wrap; display: none; flex-shrink: 1;">
             <ui:VisualElement style="flex-grow: initial; flex-direction: row; justify-content: space-between;">
                 <ui:Label tabindex="-1" text="감정표현: Happy" parse-escape-sequences="true" display-tooltip-when-elided="true" name="expressionLabel" />
                 <ui:Button text="X" parse-escape-sequences="true" display-tooltip-when-elided="true" name="expressionCloseButton" />
