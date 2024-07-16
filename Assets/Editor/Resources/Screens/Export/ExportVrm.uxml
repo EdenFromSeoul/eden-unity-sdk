@@ -24,7 +24,7 @@
                     <ui:Label class="title" tabindex="-1" text="정보" parse-escape-sequences="true" display-tooltip-when-elided="true" />
                     <ui:TextField picking-mode="Ignore" label="제목" value="캐릭터의 이름을 입력해주세요" name="nameField" style="flex-direction: column;" />
                     <ui:TextField picking-mode="Ignore" label="버전" value="버전을 입력해 주세요" name="versionField" style="flex-direction: column;" />
-                    <ui:TextField picking-mode="Ignore" label="제작자" value="자제작자의 이름을 입력해주세요" name="authorField" style="flex-direction: column;" />
+                    <ui:TextField picking-mode="Ignore" label="제작자" value="제작자의 이름을 입력해주세요" name="authorField" style="flex-direction: column;" />
                     <ui:Label class="title" tabindex="-1" text="감정표현" parse-escape-sequences="true" display-tooltip-when-elided="true" />
                     <ui:VisualElement class="expression-item" style="flex-direction: row; align-self: auto; justify-content: space-between;">
                         <ui:Label tabindex="-1" text="Happy" parse-escape-sequences="true" display-tooltip-when-elided="true" />

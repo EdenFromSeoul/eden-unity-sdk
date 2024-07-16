@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using Editor.Scripts.Struct;
 using Editor.Scripts.Util;
-using Esperecyan.UniVRMExtensions;
+using lilToon;
 using UniGLTF;
 using UniGLTF.MeshUtility;
 using UnityEditor;
@@ -15,6 +15,7 @@ using VRC.SDK3.Dynamics.PhysBone.Components;
 using VRC.SDKBase;
 using VRM;
 using Object = UnityEngine.Object;
+using VRMInitializer = Editor.Scripts.Util.VRMInitializer;
 
 namespace Editor.Scripts.Manager
 {
@@ -83,6 +84,9 @@ namespace Editor.Scripts.Manager
                 gameObject.GetComponentsInChildren<VRM10SpringBoneColliderGroup>().ToList();
 
             RemoveUnusedColliderGroups(gameObject);
+
+            UnityPath.FromUnityPath(TempPath).EnsureFolder();
+            ChangeMaterials(gameObject, TempPath);
         }
 
         public static void ConvertVrm0(
@@ -93,30 +97,78 @@ namespace Editor.Scripts.Manager
         {
             try
             {
+                if (gameObject == null)
+                {
+                    throw new ArgumentNullException(nameof(gameObject), "GameObject cannot be null.");
+                }
+
+                if (vrmMetaObject == null)
+                {
+                    throw new ArgumentNullException(nameof(vrmMetaObject), "VRMMetaObject cannot be null.");
+                }
+
                 var originalName = gameObject.name;
-                var shapeKeyNames = gameObject.GetComponentsInChildren<SkinnedMeshRenderer>()
+
+                // Debugging Step 1: Get all SkinnedMeshRenderers
+                var skinnedMeshRenderers = gameObject.GetComponentsInChildren<SkinnedMeshRenderer>();
+                Debug.Log($"Number of SkinnedMeshRenderers: {skinnedMeshRenderers.Length}");
+
+                // Debugging Step 2: Get all sharedMeshes
+                var sharedMeshes = skinnedMeshRenderers
                     .Select(renderer => renderer.sharedMesh)
                     .Where(mesh => mesh != null)
+                    .ToList();
+                Debug.Log($"Number of non-null sharedMeshes: {sharedMeshes.Count}");
+
+                // Debugging Step 3: Get all shape keys
+                var shapeKeyNames = sharedMeshes
                     .SelectMany(mesh => SkinnedMesh.GetAllShapeKeys(mesh, false))
+                    .Where(shapeKey => shapeKey != null) // 추가된 null 체크
                     .Select(shapeKey => shapeKey.Name)
-                    .Distinct();
+                    .Distinct()
+                    .ToList();
+                Debug.Log($"Number of distinct shapeKeyNames: {shapeKeyNames.Count}");
 
                 // Convert the file
                 ClearUnusedComponents(gameObject);
 
+                Debug.Log("Cleared unused components.");
+
+                var necessaryShapeKeys = new List<string>();
+                foreach (var shapeKeyName in shapeKeyNames)
+                {
+                    necessaryShapeKeys.Add(shapeKeyName);
+                }
+
                 var tempFolder = UnityPath.FromUnityPath(TempPath);
                 tempFolder.EnsureFolder();
                 var tempPrefabPath = tempFolder.Child(TempPrefabName).Value;
+
+                // file 있으면 제거
+                if (File.Exists(path))
+                {
+                    File.Delete(path);
+                }
+
                 VRMInitializer.Initialize(tempPrefabPath, gameObject);
                 Object.DestroyImmediate(gameObject.GetComponentInChildren<VRMSpringBone>());
                 SetFirstPersonOffset(gameObject);
                 SetLookAtBoneApplyer(gameObject);
 
+                Debug.Log("Set first person offset and look at bone applyer.");
+
                 var sourceAndDestination = gameObject.GetComponent<Animator>();
+                if (sourceAndDestination == null)
+                {
+                    throw new NullReferenceException("Animator component is missing on the GameObject.");
+                }
+
                 if (sourceAndDestination.GetComponentsInChildren<VRCPhysBone>().Length > 0)
                 {
                     VRCPhysBonesToVRMSpringBonesConverter.Convert(sourceAndDestination, sourceAndDestination);
                 }
+
+                Debug.Log("Converted VRCPhysBones to VRMSpringBones.");
 
                 RemoveUnusedColliderGroups(gameObject);
 
@@ -130,13 +182,29 @@ namespace Editor.Scripts.Manager
                     savingAsAsset: false
                 );
 
+                SkinnedMesh.CleanUpShapeKeysVrm0(combinedRenderer.sharedMesh, necessaryShapeKeys);
+
                 TabMeshSeparator.SeparationProcessing(gameObject);
+
+                ChangeMaterials(gameObject, TempPath);
+
+                Debug.Log("Separated meshes.");
                 gameObject.name = originalName;
                 var animator = gameObject.GetComponent<Animator>();
+                if (animator.avatar == null)
+                {
+                    throw new NullReferenceException("Animator avatar is missing.");
+                }
+
                 animator.avatar = Duplicator.CreateObjectToFolder(animator.avatar, tempPrefabPath);
                 vrmMetaObject.name = "Meta";
-                gameObject.GetComponent<VRMMeta>().Meta =
-                    Duplicator.CreateObjectToFolder(vrmMetaObject, tempPrefabPath);
+                var vrmMeta = gameObject.GetComponent<VRMMeta>();
+                if (vrmMeta == null)
+                {
+                    throw new NullReferenceException("VRMMeta component is missing.");
+                }
+
+                vrmMeta.Meta = Duplicator.CreateObjectToFolder(vrmMetaObject, tempPrefabPath);
                 foreach (var renderer in gameObject.GetComponentsInChildren<SkinnedMeshRenderer>())
                 {
                     renderer.sharedMesh.name = renderer.name;
@@ -145,47 +213,52 @@ namespace Editor.Scripts.Manager
 
                 SetFirstPersonRenderers(gameObject);
 
+                Debug.Log("Set first person renderers.");
 
-                (var animations, var expressionsDict) =
+                var (_, expressionsDict) =
                     VRChat.GetExpressionsFromVRChatAvatar(gameObject, shapeKeyNames, selectedBlendShapes);
+
+                var blendShapeProxy = gameObject.GetComponent<VRMBlendShapeProxy>();
+                if (blendShapeProxy == null)
+                {
+                    throw new NullReferenceException("VRMBlendShapeProxy component is missing.");
+                }
+                var blendShapeAvatar = blendShapeProxy.BlendShapeAvatar;
 
                 foreach (var (preset, expression) in expressionsDict)
                 {
-                    // convert vrm10 preset to vrm0 preset
-                    var vrm0Preset = preset switch
-                    {
-                        ExpressionPreset.custom => BlendShapePreset.Unknown,
-                        ExpressionPreset.happy => BlendShapePreset.Joy,
-                        ExpressionPreset.angry => BlendShapePreset.Angry,
-                        ExpressionPreset.sad => BlendShapePreset.Sorrow,
-                        ExpressionPreset.relaxed => BlendShapePreset.Fun,
-                        ExpressionPreset.aa => BlendShapePreset.A,
-                        ExpressionPreset.ih => BlendShapePreset.I,
-                        ExpressionPreset.ou => BlendShapePreset.U,
-                        ExpressionPreset.ee => BlendShapePreset.E,
-                        ExpressionPreset.oh => BlendShapePreset.O,
-                        ExpressionPreset.blink => BlendShapePreset.Blink,
-                        ExpressionPreset.blinkLeft => BlendShapePreset.Blink_L,
-                        ExpressionPreset.blinkRight => BlendShapePreset.Blink_R,
-                        ExpressionPreset.lookUp => BlendShapePreset.LookUp,
-                        ExpressionPreset.lookDown => BlendShapePreset.LookDown,
-                        ExpressionPreset.lookLeft => BlendShapePreset.LookLeft,
-                        ExpressionPreset.lookRight => BlendShapePreset.LookRight,
-                        ExpressionPreset.neutral => BlendShapePreset.Neutral,
-                        _ => BlendShapePreset.Unknown
-                    };
-
                     // convert vrm10 expression to vrm0 expression
-                    gameObject.GetComponent<VRMBlendShapeProxy>().BlendShapeAvatar.GetClip(vrm0Preset).Values =
-                        expression.MorphTargetBindings.Select(binding => new BlendShapeBinding
-                                { RelativePath = binding.RelativePath, Index = binding.Index, Weight = binding.Weight })
-                            .ToArray();
+                    var blendShapeClip = GetExpression(blendShapeAvatar, preset);
+                    if (blendShapeClip == null)
+                    {
+                        throw new NullReferenceException($"BlendShapeClip for preset {preset} is missing.");
+                    }
+
+                    var bindingList = new List<BlendShapeBinding>();
+
+                    foreach (var binding in expression.MorphTargetBindings)
+                    {
+                        // weight : 0 ~ 1 to 0 ~ 100
+                        var weight = binding.Weight * 100;
+                        bindingList.Add(new BlendShapeBinding
+                        {
+                            RelativePath = "vrm-mesh",
+                            Index = binding.Index,
+                            Weight = weight
+                        });
+                    }
+
+                    blendShapeClip.Values = bindingList.ToArray();
                 }
+
+                Debug.Log("Set expressions.");
 
                 var prefab =
                     PrefabUtility.SaveAsPrefabAssetAndConnect(gameObject, tempPrefabPath,
                         InteractionMode.AutomatedAction);
                 AssetDatabase.SaveAssets();
+
+                Debug.Log("Saved prefab.");
                 File.WriteAllBytes(path,
                     VRMEditorExporter.Export(prefab, meta: null, ScriptableObject.CreateInstance<VRMExportSettings>())
                 );
@@ -206,18 +279,203 @@ namespace Editor.Scripts.Manager
             }
         }
 
+
+        private static void ReplaceShaders(GameObject instance, string temporaryPrefabPath)
+        {
+            var alreadyDuplicatedMaterials = new Dictionary<Material, Material>();
+
+            foreach (var renderer in instance.GetComponentsInChildren<SkinnedMeshRenderer>())
+            {
+                renderer.sharedMaterials = renderer.sharedMaterials.Select(material =>
+                {
+                    if (VRMSupportedShaderNames.Contains(material.shader.name))
+                    {
+                        return material;
+                    }
+
+                    if (alreadyDuplicatedMaterials.ContainsKey(material))
+                    {
+                        return alreadyDuplicatedMaterials[material];
+                    }
+
+                    var newMaterial = Object.Instantiate(material);
+                    newMaterial.name = material.name;
+
+                    var shaderName = material.shader.name.ToLower();
+                    if (shaderName.Contains("unlit"))
+                    {
+                        newMaterial.shader = Shader.Find("UniGLTF/UniUnlit");
+                    }
+                    else if (shaderName.Contains("toon"))
+                    {
+                        newMaterial.shader = Shader.Find("VRM/MToon");
+                    }
+                    newMaterial.renderQueue = material.renderQueue;
+
+                    return alreadyDuplicatedMaterials[material]
+                        = Duplicator.CreateObjectToFolder(newMaterial, temporaryPrefabPath);
+                }).ToArray();
+            }
+        }
+
+        private static void ChangeMaterials(GameObject prefab, string savePath)
+        {
+            //1. prefab 하위 오브젝트들을 활성화시킨다.
+            List<GameObject> list = new List<GameObject>();
+            Stack<Transform> stack = new Stack<Transform>();
+            stack.Push(prefab.transform);
+
+            while (stack.Count > 0)
+            {
+                Transform current = stack.Pop();
+
+                foreach (Transform child in current)
+                {
+                    if (!child.gameObject.activeSelf)
+                    {
+                        child.gameObject.SetActive(true);
+                        list.Add(child.gameObject);
+                    }
+
+                    stack.Push(child);
+                }
+            }
+
+            var setActiveFalseList = list.ToArray();
+
+
+            //2.prefab의 skinmeshrenderer을 모아 이중 for each문으로 각각의 material을 가져온다.
+            var skinnedMeshRenderers = prefab.GetComponentsInChildren<SkinnedMeshRenderer>();
+            List<Material> referenceMaterials = new List<Material>();
+
+            foreach (var skinnedMesh in skinnedMeshRenderers)
+            {
+                foreach (var sMaterial in skinnedMesh.sharedMaterials)
+                {
+                    //3. lilToon인지 확인하고, 맞다면 referenceMaterial 라스트애 추가한다.
+                    if (sMaterial != null && sMaterial.shader.name.Contains("lilToon"))
+                    {
+                        if (!referenceMaterials.Contains(sMaterial))
+                        {
+                            referenceMaterials.Add(sMaterial);
+                        }
+                    }
+                }
+            }
+
+            //4.referneceMaterials를 순환하면 Mtoon으로 재질 변환한다. 변환한 material들은 Dictionary 형식으로 저장한다.
+            var convertedMaterials = new Dictionary<Material, Material>();
+            foreach (var material in referenceMaterials)
+            {
+                var path = Path.Combine(savePath,
+                    material.name + ".mat");
+                try
+                {
+                    lilMaterialBaker.CreateMToonMaterial(material, path);
+                }
+                catch (Exception e)
+                {
+                    //Debug.Log(material.name + "Exception : " + e);
+                }
+
+                Material m = AssetDatabase.LoadAssetAtPath(path, typeof(Material)) as Material;
+                if (!m)
+                {
+                    Debug.Log("no Materials : " + path);
+                }
+
+                convertedMaterials.Add(material, m);
+            }
+
+
+            //다시 skinMesh단위로 순환하며 Dictionary의 meterial들을 map에서 찾아 교체한다.
+            foreach (var skinnedMesh in skinnedMeshRenderers)
+            {
+                var materials = skinnedMesh.sharedMaterials;
+                for (int i = 0; i < materials.Length; i++)
+                {
+                    if (materials[i] != null && materials[i].shader.name.Contains("lilToon"))
+                    {
+                        if (convertedMaterials.ContainsKey(materials[i]))
+                        {
+                            materials[i] = convertedMaterials[materials[i]];
+                        }
+                    }
+                }
+
+                skinnedMesh.sharedMaterials = materials;
+            }
+
+            //오브잭트들을 다시 비활성화한다.
+            setActiveFalseList.ToList().ForEach(obj => obj.SetActive(false));
+        }
+
+        private static BlendShapeClip GetExpression(BlendShapeAvatar blendShapeAvatar, ExpressionPreset preset)
+        {
+            switch (preset)
+            {
+                case ExpressionPreset.aa:
+                    return blendShapeAvatar.GetClip(BlendShapePreset.A);
+                case ExpressionPreset.ih:
+                    return blendShapeAvatar.GetClip(BlendShapePreset.I);
+                case ExpressionPreset.ou:
+                    return blendShapeAvatar.GetClip(BlendShapePreset.U);
+                case ExpressionPreset.ee:
+                    return blendShapeAvatar.GetClip(BlendShapePreset.E);
+                case ExpressionPreset.oh:
+                    return blendShapeAvatar.GetClip(BlendShapePreset.O);
+                case ExpressionPreset.happy:
+                    return blendShapeAvatar.GetClip(BlendShapePreset.Joy);
+                case ExpressionPreset.angry:
+                    return blendShapeAvatar.GetClip(BlendShapePreset.Angry);
+                case ExpressionPreset.sad:
+                    return blendShapeAvatar.GetClip(BlendShapePreset.Sorrow);
+                case ExpressionPreset.relaxed:
+                    return blendShapeAvatar.GetClip(BlendShapePreset.Fun);
+                case ExpressionPreset.surprised:
+                    var blendShapeClip = ScriptableObject.CreateInstance<BlendShapeClip>();
+                    blendShapeClip.BlendShapeName = "Surprised";
+                    blendShapeAvatar.Clips.Add(blendShapeClip);
+                    return blendShapeClip;
+                case ExpressionPreset.blink:
+                    return blendShapeAvatar.GetClip(BlendShapePreset.Blink);
+                case ExpressionPreset.blinkLeft:
+                    return blendShapeAvatar.GetClip(BlendShapePreset.Blink_L);
+                case ExpressionPreset.blinkRight:
+                    return blendShapeAvatar.GetClip(BlendShapePreset.Blink_R);
+                case ExpressionPreset.lookUp:
+                    return blendShapeAvatar.GetClip(BlendShapePreset.LookUp);
+                case ExpressionPreset.lookDown:
+                    return blendShapeAvatar.GetClip(BlendShapePreset.LookDown);
+                case ExpressionPreset.lookLeft:
+                    return blendShapeAvatar.GetClip(BlendShapePreset.LookLeft);
+                case ExpressionPreset.lookRight:
+                    return blendShapeAvatar.GetClip(BlendShapePreset.LookRight);
+                case ExpressionPreset.neutral:
+                    return blendShapeAvatar.GetClip(BlendShapePreset.Neutral);
+                case ExpressionPreset.custom:
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(preset), preset, null);
+            }
+        }
+
         private static void ClearUnusedComponents(GameObject gameObject)
         {
-            // Clear unused components
             foreach (var transform in gameObject.transform.GetComponentsInChildren<Transform>(includeInactive: true))
             {
-                if (transform || transform.gameObject || transform.gameObject.activeSelf) continue;
-                Object.DestroyImmediate(transform);
+                if (transform == null || transform.gameObject == null || transform.gameObject.activeSelf)
+                {
+                    continue;
+                }
+                Object.DestroyImmediate(transform.gameObject);
             }
 
             foreach (var component in gameObject.transform.GetComponentsInChildren<MonoBehaviour>())
             {
-                if (component || component.enabled) continue;
+                if (component == null || component.enabled)
+                {
+                    continue;
+                }
                 Object.DestroyImmediate(component);
             }
         }

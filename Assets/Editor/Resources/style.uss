@@ -51,7 +51,7 @@ Button {
     justify-content: center;
     border-width: 0;
     border-radius: 4px;
-    background-color: white;
+    background-color: var(--gray-50);
     color: var(--black);
     -unity-font-style: normal;
 }
@@ -75,12 +75,12 @@ DropdownField {
 }
 
 Button:hover {
-    background-color: var(--black-hover);
+    background-color: var(--primary-hover);
     color: white;
 }
 
 Button:active {
-    background-color: var(--black-active);
+    background-color: var(--primary-active);
     color: white;
 }
 
@@ -141,6 +141,12 @@ ItemButton Label {
     color: var(--black);
 }
 
+.addButton {
+    border-width: 1px;
+    border-radius: 4px;
+    border-color: var(--primary);
+}
+
 .selected {
     background-color: var(--primary);
     border-color: var(--primary);
@@ -179,6 +185,21 @@ ItemButton Label {
     background-color: white;
     color: var(--black);
     -unity-font-style: normal;
+}
+
+.expression-item Button:hover {
+    background-color: var(--primary-hover);
+    color: white;
+}
+
+.expression-item Button:active {
+    background-color: var(--primary-active);
+    color: white;
+}
+
+.expression-item Button.selected {
+    background-color: var(--primary);
+    color: white;
 }
 
 .blend-shape-item {

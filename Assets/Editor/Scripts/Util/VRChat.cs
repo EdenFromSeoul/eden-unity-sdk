@@ -128,9 +128,6 @@ namespace Editor.Scripts.Util
 
                 expressions.Add(ExpressionPreset.blink, expression);
             }
-
-            var blinkShapeKeyNames = GetBlinkShapeKeyNames(shapeKeyNamesList);
-            Debug.Log(string.Join(", ", blinkShapeKeyNames));
         }
 
         private static void GetOtherExpressions(GameObject gameObject,

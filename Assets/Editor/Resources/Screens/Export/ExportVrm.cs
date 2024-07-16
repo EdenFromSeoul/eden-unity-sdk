@@ -76,7 +76,7 @@ namespace Editor.Resources.Screens.Export
             var visualTree = UnityEngine.Resources.Load<VisualTreeAsset>("Screens/Export/ExportVrm");
             visualTree.CloneTree(_container);
             _exportButton = _container.Q<Button>("exportButton");
-            _exportButton.clicked += () => ExportItem(true);
+            _exportButton.clicked += () => ExportItem(false);
             _backButton = _container.Q<Button>("backButton");
             _backButton.clicked += onBackClicked;
             _preview = new Preview(_container.Q("preview"), EdenStudioInitializer.SelectedItem?.path ?? "");
@@ -114,7 +114,7 @@ namespace Editor.Resources.Screens.Export
 
         private static void OpenExpressionPanel(string expression)
         {
-            _expressionLabel.text = expression;
+            _expressionLabel.text = $"감정표현: {expression}";
             _expressionScrollView.Clear();
             var selectedItem = EdenStudioInitializer.SelectedItem;
             var preset = PresetManager.LoadOrCreateVrm10MorphTargetPreset(selectedItem.modelName);
@@ -170,6 +170,7 @@ namespace Editor.Resources.Screens.Export
             {
                 text = "쉐이프키 추가하기"
             };
+            addButton.AddToClassList("addButton");
             _expressionScrollView.Add(addButton);
             _expressionPanel.style.display = DisplayStyle.Flex;
         }
@@ -345,14 +346,14 @@ namespace Editor.Resources.Screens.Export
             // 이 프리팹을 사용
             prefab = prefabClone;
 
-            //prefab의 material들의 셰이더를 Mtoon으로 변환
-            ChangeMaterials(prefab, "Assets/Eden/");
-
             if (toVrm0)
             {
                 ExportToVrm0(prefab, savePath);
                 return;
             }
+
+            //prefab의 material들의 셰이더를 Mtoon으로 변환
+            // ChangeMaterials(prefab, "Assets/Eden/");
 
             using (var tempDisposable = new TempDisposable())
             using (var arrayManager = new NativeArrayManager())

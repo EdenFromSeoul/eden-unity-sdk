@@ -36,11 +36,21 @@ namespace Editor.Scripts.Util
             BoneInfo boneInfo
         )
         {
+            var stiffness = vrcPhysBoneParameters.Spring * 2.0f;
+            var drag = vrcPhysBoneParameters.Stiffness * 4.0f;
+            var gravity = 0.0f;
+
+            if (vrcPhysBoneParameters.Gravity != 0)
+            {
+                stiffness = (vrcPhysBoneParameters.Spring / (vrcPhysBoneParameters.Gravity + 1)) * 2.0f;
+                gravity = vrcPhysBoneParameters.Gravity * vrcPhysBoneParameters.Pull;
+            }
+
             return new VRMSpringBoneParameters
             {
-                StiffnessForce = vrcPhysBoneParameters.Pull * 4.0f,
-                DragForce = vrcPhysBoneParameters.Spring,
-                GravityPower = vrcPhysBoneParameters.Gravity * 20.0f,
+                StiffnessForce = stiffness,
+                DragForce = drag,
+                GravityPower = gravity,
             };
         }
 

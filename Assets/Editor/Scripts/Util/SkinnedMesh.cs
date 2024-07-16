@@ -78,5 +78,36 @@ namespace Editor.Scripts.Util
 
             return shapeKeys;
         }
+
+
+
+        /// <summary>
+        /// nesessaryShapeKeysで指定されたシェイプキーから法線・接線を削除し、それ以外のシェイプキーは削除します。
+        /// </summary>
+        /// <param name="mesh"></param>
+        /// <param name="nesessaryShapeKeys"></param>
+        /// <returns></returns>
+        internal static void CleanUpShapeKeysVrm0(Mesh mesh, IEnumerable<string> nesessaryShapeKeys)
+        {
+            var shapeKeys = GetAllShapeKeysVrm0(mesh, useShapeKeyNormalsAndTangents: false);
+            mesh.ClearBlendShapes();
+            foreach (var name in nesessaryShapeKeys)
+            {
+                var shapeKey = shapeKeys.FirstOrDefault(key => key.Name == name);
+                if (shapeKey == null)
+                {
+                    continue;
+                }
+
+                mesh.AddBlendShapeFrame(
+                    shapeKey.Name,
+                    100,
+                    shapeKey.Positions.ToArray(),
+                    shapeKey.Normals.ToArray(),
+                    shapeKey.Tangents.ToArray()
+                );
+            }
+
+        }
     }
 }
