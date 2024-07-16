@@ -13,6 +13,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
 using UniVRM10;
+using VRM;
 using VrmLib;
 using VRMShaders;
 using Object = UnityEngine.Object;
@@ -75,7 +76,7 @@ namespace Editor.Resources.Screens.Export
             var visualTree = UnityEngine.Resources.Load<VisualTreeAsset>("Screens/Export/ExportVrm");
             visualTree.CloneTree(_container);
             _exportButton = _container.Q<Button>("exportButton");
-            _exportButton.clicked += ExportItem;
+            _exportButton.clicked += () => ExportItem(true);
             _backButton = _container.Q<Button>("backButton");
             _backButton.clicked += onBackClicked;
             _preview = new Preview(_container.Q("preview"), EdenStudioInitializer.SelectedItem?.path ?? "");
@@ -325,7 +326,7 @@ namespace Editor.Resources.Screens.Export
             setActiveFalseList.ToList().ForEach(obj => obj.SetActive(false));
         }
 
-        private static void ExportItem()
+        private static void ExportItem(bool toVrm0 = false)
         {
             // Export the selected item
             var prefabPath = EdenStudioInitializer.SelectedItem.path;
@@ -346,6 +347,12 @@ namespace Editor.Resources.Screens.Export
 
             //prefab의 material들의 셰이더를 Mtoon으로 변환
             ChangeMaterials(prefab, "Assets/Eden/");
+
+            if (toVrm0)
+            {
+                ExportToVrm0(prefab, savePath);
+                return;
+            }
 
             using (var tempDisposable = new TempDisposable())
             using (var arrayManager = new NativeArrayManager())
@@ -398,8 +405,6 @@ namespace Editor.Resources.Screens.Export
                     selectedBlendShapes
                 );
 
-                // freeze mesh
-                // 왠지 몰라도 노멀라이즈하면 모델이 깨짐. 그래서 일단 주석처리. TODO: 노멀라이즈 수정
                 var newMeshMap = BoneNormalizer.NormalizeHierarchyFreezeMesh(prefab);
                 BoneNormalizer.Replace(prefab, newMeshMap, true, true);
                 var converter = new ModelExporter();
@@ -428,6 +433,12 @@ namespace Editor.Resources.Screens.Export
                     {
                         material.SetTexture("_ShadeTex", ShadeTexture);
                     }
+
+                    // outline 속성 제거
+                    if (material.HasProperty("_OutlineWidth"))
+                    {
+                        material.SetFloat("_OutlineWidth", 0);
+                    }
                 }
 
                 var gltfExportSettings = new GltfExportSettings();
@@ -439,6 +450,59 @@ namespace Editor.Resources.Screens.Export
             }
 
             EditorUtility.DisplayDialog("Exported", "The item has been exported to VRM format.", "OK");
+        }
+
+        private static void ExportToVrm0(GameObject instance, string savePath)
+        {
+            using (var tempDisposable = new TempDisposable())
+            {
+                var selectedItem = EdenStudioInitializer.SelectedItem;
+                var vrmMeta = CreateInstance<VRMMetaObject>();
+                vrmMeta.Title = _nameField.value;
+                vrmMeta.Version = _versionField.value;
+                vrmMeta.Author = _authorField.value;
+                var copy = Instantiate(instance);
+                tempDisposable.Add(copy);
+                instance = copy;
+
+                var preset = PresetManager.LoadOrCreateVrm10MorphTargetPreset(selectedItem.modelName);
+
+                // 선택된 blendShapeKey들을 가져옴
+                var selectedBlendShapes = new Dictionary<string, List<BlendShapeData>>();
+                foreach (var expression in new[] { "happy", "angry", "sad", "relaxed", "surprised" })
+                {
+                    var savedBlendShapeKeys = preset.Get(expression);
+                    var currentSkinnedMeshRenderers = instance.GetComponentsInChildren<SkinnedMeshRenderer>();
+
+                    // 현재 아바타에서 찾아서 가져옴
+                    var selectedBlendShapeKeys = new List<BlendShapeData>();
+                    foreach (var saved in savedBlendShapeKeys)
+                    {
+                        var found = currentSkinnedMeshRenderers.FirstOrDefault(v => v.sharedMesh.name == saved.skinnedMeshRendererPath);
+                        if (found != null)
+                        {
+                            var blendShapeData = new BlendShapeData(found, saved.index, saved.shapeKeyName);
+
+                            // 이미 선택된 blendShapeKey에 없을 경우 추가
+                            if (!selectedBlendShapeKeys.Contains(blendShapeData))
+                            {
+                                selectedBlendShapeKeys.Add(blendShapeData);
+                            }
+                        }
+                    }
+
+                    selectedBlendShapes[expression] = selectedBlendShapeKeys;
+                }
+
+                ConvertManager.ConvertVrm0(
+                    savePath,
+                    instance,
+                    vrmMeta,
+                    selectedBlendShapes
+                    );
+
+                EditorUtility.DisplayDialog("Exported", "The item has been exported to VRM format.", "OK");
+            }
         }
 
         public void CreateGUI()

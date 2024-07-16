@@ -112,19 +112,23 @@ namespace Editor.Scripts.Util
                     if (sourceCollider.insideBounds)
                     {
                         targetCollider.ColliderType = VRM10SpringBoneColliderTypes.SphereInside;
-                    } else
+                    }
+                    else
                     {
                         targetCollider.ColliderType = VRM10SpringBoneColliderTypes.Sphere;
                     }
+
                     break;
                 case VRCPhysBoneColliderBase.ShapeType.Capsule:
                     if (sourceCollider.insideBounds)
                     {
                         targetCollider.ColliderType = VRM10SpringBoneColliderTypes.CapsuleInside;
-                    } else
+                    }
+                    else
                     {
                         targetCollider.ColliderType = VRM10SpringBoneColliderTypes.Capsule;
                     }
+
                     break;
                 case VRCPhysBoneColliderBase.ShapeType.Plane:
                     targetCollider.ColliderType = VRM10SpringBoneColliderTypes.Plane;

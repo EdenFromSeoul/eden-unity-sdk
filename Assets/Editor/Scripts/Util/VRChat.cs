@@ -10,7 +10,7 @@ namespace Editor.Scripts.Util
 {
     public static class VRChat
     {
-        enum HandGesture
+        internal enum HandGesture
         {
             Victory,
             RockNRoll,
@@ -18,7 +18,13 @@ namespace Editor.Scripts.Util
             ThumbsUp,
             Peace,
             HandGun,
+            FingerPoint,
         }
+
+        /// <summary>
+        /// 自動まばたきに利用されるメッシュのオブジェクトのパス。
+        /// </summary>
+        internal static readonly string AutoBlinkMeshPath = "Body";
 
         static readonly IDictionary<ExpressionPreset, int> ExpressionPresetVRChatVisemeDict =
             new Dictionary<ExpressionPreset, int>
@@ -52,8 +58,6 @@ namespace Editor.Scripts.Util
             var avatarDescriptor = gameObject.GetComponent<VRCAvatarDescriptor>();
             var visemeBlendShapes = avatarDescriptor.VisemeBlendShapes;
             var shapeKeyNamesList = shapeKeyNames.ToList();
-            Debug.Log(string.Join(", ", shapeKeyNamesList));
-            Debug.Log(string.Join(", ", visemeBlendShapes));
 
             foreach (var (preset, i) in ExpressionPresetVRChatVisemeDict)
             {
@@ -62,10 +66,6 @@ namespace Editor.Scripts.Util
                 {
                     continue;
                 }
-
-                // index 찾기
-                var index = shapeKeyNamesList.ToList().IndexOf(shapeKeyName);
-                Debug.Log($"{preset}: {shapeKeyName} ({index})");
 
                 var expression = ScriptableObject.CreateInstance<VRM10Expression>();
                 expression.MorphTargetBindings = new[]
