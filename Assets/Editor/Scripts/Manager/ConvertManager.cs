@@ -120,6 +120,7 @@ namespace Editor.Scripts.Manager
                     .ToList();
                 Debug.Log($"Number of non-null sharedMeshes: {sharedMeshes.Count}");
 
+
                 // Debugging Step 3: Get all shape keys
                 var shapeKeyNames = sharedMeshes
                     .SelectMany(mesh => SkinnedMesh.GetAllShapeKeys(mesh, false))
@@ -129,16 +130,26 @@ namespace Editor.Scripts.Manager
                     .ToList();
                 Debug.Log($"Number of distinct shapeKeyNames: {shapeKeyNames.Count}");
 
+
+                var (_, expressionsDict) =
+                    VRChat.GetExpressions(gameObject, shapeKeyNames, selectedBlendShapes);
+
                 // Convert the file
                 ClearUnusedComponents(gameObject);
 
                 Debug.Log("Cleared unused components.");
 
                 var necessaryShapeKeys = new List<string>();
-                foreach (var shapeKeyName in shapeKeyNames)
+                foreach (var (_, expressionBinding) in expressionsDict)
                 {
-                    necessaryShapeKeys.Add(shapeKeyName);
+                    foreach (var names in expressionBinding.ShapeKeyNames)
+                    {
+                        Debug.Log($"Shape key: {names}");
+                    }
+                    necessaryShapeKeys.AddRange(expressionBinding.ShapeKeyNames.ToList());
                 }
+
+                necessaryShapeKeys = necessaryShapeKeys.Distinct().ToList();
 
                 var tempFolder = UnityPath.FromUnityPath(TempPath);
                 tempFolder.EnsureFolder();
@@ -215,8 +226,8 @@ namespace Editor.Scripts.Manager
 
                 Debug.Log("Set first person renderers.");
 
-                var (_, expressionsDict) =
-                    VRChat.GetExpressionsFromVRChatAvatar(gameObject, shapeKeyNames, selectedBlendShapes);
+                // var (_, expressionsDict) =
+                //     VRChat.GetExpressionsFromVRChatAvatar(gameObject, shapeKeyNames, selectedBlendShapes);
 
                 var blendShapeProxy = gameObject.GetComponent<VRMBlendShapeProxy>();
                 if (blendShapeProxy == null)
@@ -236,20 +247,53 @@ namespace Editor.Scripts.Manager
 
                     var bindingList = new List<BlendShapeBinding>();
 
-                    foreach (var binding in expression.MorphTargetBindings)
+                    foreach (var names in expression.ShapeKeyNames)
                     {
-                        // weight : 0 ~ 1 to 0 ~ 100
-                        var weight = binding.Weight * 100;
+                        var index = necessaryShapeKeys.IndexOf(names);
+                        if (index == -1)
+                        {
+                            Debug.LogWarning($"Shape key {names} is missing.");
+                            continue;
+                            // throw new NullReferenceException($"Shape key {names} is missing.");
+                        }
+
                         bindingList.Add(new BlendShapeBinding
                         {
                             RelativePath = "vrm-mesh",
-                            Index = binding.Index,
-                            Weight = weight
+                            Index = index,
+                            Weight = 100
                         });
                     }
 
                     blendShapeClip.Values = bindingList.ToArray();
                 }
+
+                // foreach (var (preset, expression) in expressionsDict)
+                // {
+                //     // convert vrm10 expression to vrm0 expression
+                //     var blendShapeClip = GetExpression(blendShapeAvatar, preset);
+                //     if (blendShapeClip == null)
+                //     {
+                //         throw new NullReferenceException($"BlendShapeClip for preset {preset} is missing.");
+                //     }
+                //
+                //     var bindingList = new List<BlendShapeBinding>();
+                //
+                //     foreach (var binding in expression.MorphTargetBindings)
+                //     {
+                //         Debug.Log($"Binding: {binding.Index}, {binding.Weight}");
+                //         // weight : 0 ~ 1 to 0 ~ 100
+                //         var weight = binding.Weight * 100;
+                //         bindingList.Add(new BlendShapeBinding
+                //         {
+                //             RelativePath = "vrm-mesh",
+                //             Index = binding.Index,
+                //             Weight = weight
+                //         });
+                //     }
+
+                    // blendShapeClip.Values = bindingList.ToArray();
+                // }
 
                 Debug.Log("Set expressions.");
 

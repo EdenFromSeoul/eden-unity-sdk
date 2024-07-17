@@ -6,7 +6,6 @@ using Editor.Resources.Components;
 using Editor.Scripts;
 using Editor.Scripts.Manager;
 using Editor.Scripts.Struct;
-using lilToon;
 using UniGLTF;
 using UniGLTF.MeshUtility;
 using UnityEditor;
@@ -76,7 +75,7 @@ namespace Editor.Resources.Screens.Export
             var visualTree = UnityEngine.Resources.Load<VisualTreeAsset>("Screens/Export/ExportVrm");
             visualTree.CloneTree(_container);
             _exportButton = _container.Q<Button>("exportButton");
-            _exportButton.clicked += () => ExportItem(false);
+            _exportButton.clicked += () => ExportItem(true);
             _backButton = _container.Q<Button>("backButton");
             _backButton.clicked += onBackClicked;
             _preview = new Preview(_container.Q("preview"), EdenStudioInitializer.SelectedItem?.path ?? "");
@@ -235,98 +234,6 @@ namespace Editor.Resources.Screens.Export
             _blendShapeKeys = _blendShapeDataMap.Keys.ToList();
         }
 
-        private static void ChangeMaterials(GameObject prefab, string savePath)
-        {
-            //1. prefab 하위 오브젝트들을 활성화시킨다.
-            List<GameObject> list = new List<GameObject>();
-            Stack<Transform> stack = new Stack<Transform>();
-            stack.Push(prefab.transform);
-
-            while (stack.Count > 0)
-            {
-                Transform current = stack.Pop();
-
-                foreach (Transform child in current)
-                {
-                    if (!child.gameObject.activeSelf)
-                    {
-                        child.gameObject.SetActive(true);
-                        list.Add(child.gameObject);
-                    }
-
-                    stack.Push(child);
-                }
-            }
-
-            var setActiveFalseList = list.ToArray();
-
-
-            //2.prefab의 skinmeshrenderer을 모아 이중 for each문으로 각각의 material을 가져온다.
-            var skinnedMeshRenderers = prefab.GetComponentsInChildren<SkinnedMeshRenderer>();
-            List<Material> referenceMaterials = new List<Material>();
-
-            foreach (var skinnedMesh in skinnedMeshRenderers)
-            {
-                foreach (var sMaterial in skinnedMesh.sharedMaterials)
-                {
-                    //3. lilToon인지 확인하고, 맞다면 referenceMaterial 라스트애 추가한다.
-                    if (sMaterial != null && sMaterial.shader.name.Contains("lilToon"))
-                    {
-                        if (!referenceMaterials.Contains(sMaterial))
-                        {
-                            referenceMaterials.Add(sMaterial);
-                        }
-                    }
-                }
-            }
-
-            //4.referneceMaterials를 순환하면 Mtoon으로 재질 변환한다. 변환한 material들은 Dictionary 형식으로 저장한다.
-            var convertedMaterials = new Dictionary<Material, Material>();
-            foreach (var material in referenceMaterials)
-            {
-                var path = Path.Combine(savePath,
-                    material.name + ".mat");
-                try
-                {
-                    lilMaterialBaker.CreateMToonMaterial(material, path);
-                }
-                catch (Exception e)
-                {
-                    //Debug.Log(material.name + "Exception : " + e);
-                }
-
-                Material m = AssetDatabase.LoadAssetAtPath(path, typeof(Material)) as Material;
-                if (!m)
-                {
-                    Debug.Log("no Materials : " + path);
-                }
-
-                convertedMaterials.Add(material, m);
-            }
-
-
-            //다시 skinMesh단위로 순환하며 Dictionary의 meterial들을 map에서 찾아 교체한다.
-            foreach (var skinnedMesh in skinnedMeshRenderers)
-            {
-                var materials = skinnedMesh.sharedMaterials;
-                for (int i = 0; i < materials.Length; i++)
-                {
-                    if (materials[i] != null && materials[i].shader.name.Contains("lilToon"))
-                    {
-                        if (convertedMaterials.ContainsKey(materials[i]))
-                        {
-                            materials[i] = convertedMaterials[materials[i]];
-                        }
-                    }
-                }
-
-                skinnedMesh.sharedMaterials = materials;
-            }
-
-            //오브잭트들을 다시 비활성화한다.
-            setActiveFalseList.ToList().ForEach(obj => obj.SetActive(false));
-        }
-
         private static void ExportItem(bool toVrm0 = false)
         {
             // Export the selected item
@@ -351,9 +258,6 @@ namespace Editor.Resources.Screens.Export
                 ExportToVrm0(prefab, savePath);
                 return;
             }
-
-            //prefab의 material들의 셰이더를 Mtoon으로 변환
-            // ChangeMaterials(prefab, "Assets/Eden/");
 
             using (var tempDisposable = new TempDisposable())
             using (var arrayManager = new NativeArrayManager())
