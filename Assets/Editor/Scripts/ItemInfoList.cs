@@ -1,8 +1,10 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Runtime
+namespace Editor.Scripts
 {
+    [Serializable]
     public class ItemInfoList : ScriptableObject
     {
         public List<ItemInfo> items;

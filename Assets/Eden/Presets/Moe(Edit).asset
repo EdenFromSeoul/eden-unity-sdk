@@ -1,0 +1,77 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c68d3d038dd64d4b944b90ebc0cbb60f, type: 3}
+  m_Name: Moe(Edit)
+  m_EditorClassIdentifier: 
+  presetName: 
+  happy:
+  - skinnedMeshRendererPath: Body
+    index: 30
+    shapeKeyName: "\u76EE_\u7B11\u3044"
+  - skinnedMeshRendererPath: Body
+    index: 181
+    shapeKeyName: "\u53E3_\u53E3\u89D2\u4E0A\u3052"
+  - skinnedMeshRendererPath: Body
+    index: 312
+    shapeKeyName: "Option_\u982C\u67D3\u3081"
+  angry:
+  - skinnedMeshRendererPath: Body
+    index: 48
+    shapeKeyName: "\u76EE_\u540A\u308A\u76EE"
+  - skinnedMeshRendererPath: Body
+    index: 214
+    shapeKeyName: "\u53E3_\u25A1"
+  - skinnedMeshRendererPath: Body
+    index: 246
+    shapeKeyName: "\u7709_\u6012\u308A"
+  - skinnedMeshRendererPath: Body
+    index: 311
+    shapeKeyName: "Option_\u9752\u3056\u3081"
+  sad:
+  - skinnedMeshRendererPath: Body
+    index: 54
+    shapeKeyName: "\u76EE_\u304A\u3063\u3068\u308A"
+  - skinnedMeshRendererPath: Body
+    index: 99
+    shapeKeyName: "\u4E0B\u307E\u3064\u6BDB_\u4E0A2"
+  - skinnedMeshRendererPath: Body
+    index: 322
+    shapeKeyName: "Option_\u6D99"
+  - skinnedMeshRendererPath: Body
+    index: 323
+    shapeKeyName: "Option_\u6D992"
+  - skinnedMeshRendererPath: Body
+    index: 324
+    shapeKeyName: "Option_\u6D993"
+  - skinnedMeshRendererPath: Body
+    index: 325
+    shapeKeyName: "Option_\u6D994_L"
+  - skinnedMeshRendererPath: Body
+    index: 326
+    shapeKeyName: "Option_\u6D994_R"
+  surprised:
+  - skinnedMeshRendererPath: Body
+    index: 36
+    shapeKeyName: "\u76EE_\u3073\u3063\u304F\u308A"
+  - skinnedMeshRendererPath: Body
+    index: 214
+    shapeKeyName: "\u53E3_\u25A1"
+  - skinnedMeshRendererPath: Body
+    index: 319
+    shapeKeyName: "Option_\u306F\u3061\u3085\u76EE"
+  relaxed:
+  - skinnedMeshRendererPath: Body
+    index: 60
+    shapeKeyName: "\u76EE_\u304A\u3063\u3068\u308A3"
+  - skinnedMeshRendererPath: Body
+    index: 181
+    shapeKeyName: "\u53E3_\u53E3\u89D2\u4E0A\u3052"

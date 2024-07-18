@@ -51,6 +51,12 @@ Button {
     justify-content: center;
     border-width: 0;
     border-radius: 4px;
+    background-color: var(--gray-50);
+    color: var(--black);
+    -unity-font-style: normal;
+}
+
+.tab-button {
     background-color: white;
     color: var(--black);
     -unity-font-style: normal;
@@ -69,12 +75,12 @@ DropdownField {
 }
 
 Button:hover {
-    background-color: var(--black-hover);
+    background-color: var(--primary-hover);
     color: white;
 }
 
 Button:active {
-    background-color: var(--black-active);
+    background-color: var(--primary-active);
     color: white;
 }
 
@@ -135,6 +141,12 @@ ItemButton Label {
     color: var(--black);
 }
 
+.addButton {
+    border-width: 1px;
+    border-radius: 4px;
+    border-color: var(--primary);
+}
+
 .selected {
     background-color: var(--primary);
     border-color: var(--primary);
@@ -148,6 +160,146 @@ ItemButton Label {
     background-color: var(--primary-hover);
 }
 
+.fixed-width {
+    min-width: 250px;
+    width: 250px;
+    max-width: 250px;
+}
+
+.info-block .title {
+    margin-bottom: 8px;
+    color: var(--gray-500);
+}
+
+.expression-item Label {
+    margin-bottom: 4px;
+    color: var(--black);
+    align-self: center;
+}
+
+.expression-item Button {
+    padding: 6px 16px;
+    border-width: 1px;
+    border-radius: 4px;
+    border-color: var(--primary);
+    background-color: white;
+    color: var(--black);
+    -unity-font-style: normal;
+}
+
+.expression-item Button:hover {
+    background-color: var(--primary-hover);
+    color: white;
+}
+
+.expression-item Button:active {
+    background-color: var(--primary-active);
+    color: white;
+}
+
+.expression-item Button.selected {
+    background-color: var(--primary);
+    color: white;
+}
+
+.blend-shape-item {
+    flex-direction: row;
+    justify-content: space-between;
+    background-color: var(--gray-50);
+}
+
+.blend-shape-item DropdownField {
+    width: 100%;
+    align-items: flex-start;
+    background-color: var(--gray-50);
+}
+
+.blend-shape-item DropdownField Label {
+    margin-bottom: 4px;
+    color: var(--black);
+    background-color: var(--gray-50);
+}
+
+.blend-shape-item DropdownField VisualElement {
+    background-color: white;
+    border-color: var(--default);
+    padding: 6px 16px;
+}
+
+.blend-shape-item DropdownField VisualElement PopupTextElement {
+    color: var(--black);
+    background-color: white;
+}
+
+TextField {
+    padding: 6px 0;
+    border-color: var(--default);
+    background-color: white;
+    color: var(--black);
+    -unity-font-style: normal;
+}
+
+TextField Label {
+    color: var(--black);
+    margin-bottom: 4px;
+}
+
+TextField TextInput {
+    padding: 6px 16px;
+    color: var(--black);
+    background-color: white;
+    border-color: var(--default);
+}
+
+TextField TextInput:hover {
+    border-color: var(--default-hover);
+}
+
+TextField TextInput:active {
+    border-color: var(--default-active);
+}
+
+TextField:hover {
+    border-color: var(--default-hover);
+}
+
+TextField:active {
+    border-color: var(--default-active);
+}
+
+TextField:focus {
+    border-color: var(--primary);
+}
+
+TextField:disabled {
+    background-color: var(--default);
+    color: var(--black-selected);
+}
+
+#container {
+    flex-grow: 1;
+    padding: 16px;
+    background-color: var(--gray-100);
+}
+
+#content {
+    flex-grow: 1;
+    padding: 16px;
+    background-color: white;
+    border-radius: 4px;
+    border-color: #DFE4EA;
+    border-width: 1px;
+}
+
 #import-button {
     margin-right: 8px;
+}
+
+#expressionPanel {
+    padding: 16px;
+    background-color: var(--gray-50);
+    border-radius: 4px;
+    border-color: #DFE4EA;
+    border-width: 1px;
+    border-left-width: 0;
 }

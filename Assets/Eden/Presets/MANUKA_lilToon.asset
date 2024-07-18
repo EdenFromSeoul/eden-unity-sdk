@@ -1,0 +1,53 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c68d3d038dd64d4b944b90ebc0cbb60f, type: 3}
+  m_Name: MANUKA_lilToon
+  m_EditorClassIdentifier: 
+  presetName: 
+  happy:
+  - skinnedMeshRendererPath: Body
+    index: 25
+    shapeKeyName: eye_joy
+  - skinnedMeshRendererPath: Body
+    index: 242
+    shapeKeyName: mouth_a
+  angry:
+  - skinnedMeshRendererPath: Body
+    index: 100
+    shapeKeyName: eye_angry
+  - skinnedMeshRendererPath: Body
+    index: 273
+    shapeKeyName: "mouth_\u2227"
+  - skinnedMeshRendererPath: Body
+    index: 327
+    shapeKeyName: brow_anger 2
+  sad:
+  - skinnedMeshRendererPath: Body
+    index: 103
+    shapeKeyName: eye_sad
+  - skinnedMeshRendererPath: Body
+    index: 265
+    shapeKeyName: mouth_sad
+  - skinnedMeshRendererPath: Body
+    index: 330
+    shapeKeyName: brow_sad
+  surprised: []
+  relaxed:
+  - skinnedMeshRendererPath: Body
+    index: 106
+    shapeKeyName: eye_pleasure
+  - skinnedMeshRendererPath: Body
+    index: 261
+    shapeKeyName: mouth_smile
+  - skinnedMeshRendererPath: Body
+    index: 321
+    shapeKeyName: brow_joy

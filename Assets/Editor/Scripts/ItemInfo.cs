@@ -1,8 +1,11 @@
 using System;
+using System.Collections.Generic;
+using Editor.Scripts.Struct;
 using UnityEngine;
 
-namespace Runtime
+namespace Editor.Scripts
 {
+    [Serializable]
     public class ItemInfo : ScriptableObject
     {
         public enum ModelType { VRChat, VRM, Other }
@@ -16,6 +19,7 @@ namespace Runtime
         public ModelSlot slot;
         public ModelStatus status;
         public Texture2D preview { get; internal set; }
+        public Dictionary<string, List<BlendShapeData>> SelectedBlendShapes { get; set; } = new();
 
         public ItemInfoData ToData()
         {
@@ -27,7 +31,8 @@ namespace Runtime
                 type = (ItemInfoData.ModelType) Enum.Parse(typeof(ItemInfoData.ModelType), type.ToString()),
                 slot = (ItemInfoData.ModelSlot) Enum.Parse(typeof(ItemInfoData.ModelSlot), slot.ToString()),
                 status = (ItemInfoData.ModelStatus) Enum.Parse(typeof(ItemInfoData.ModelStatus), status.ToString()),
-                preview = preview != null ? Convert.ToBase64String(preview.EncodeToPNG()) : null
+                preview = preview != null ? Convert.ToBase64String(preview.EncodeToPNG()) : null,
+                SelectedBlendShapes = SelectedBlendShapes
             };
         }
 

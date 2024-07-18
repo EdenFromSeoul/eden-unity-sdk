@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using Runtime;
+using System.Runtime.Serialization.Formatters.Binary;
 using UnityEditor;
 using UnityEngine;
 
@@ -10,7 +10,7 @@ namespace Editor.Scripts.Manager
 {
     public class ItemManager : MonoBehaviour
     {
-        private const string ItemsInfoPath = "Assets/Eden/Items.json";
+        private const string ItemsInfoPath = "Assets/Eden/items.eden";
 
         public static List<ItemInfo> ItemsInfoList;
 
@@ -18,7 +18,7 @@ namespace Editor.Scripts.Manager
         {
             if (!File.Exists(ItemsInfoPath))
             {
-                File.WriteAllText(ItemsInfoPath, "{}");
+                SaveItemsInfo(new List<ItemInfo>());
             }
 
             UpdateItemsInfo();
@@ -29,7 +29,6 @@ namespace Editor.Scripts.Manager
             var allItems = GetAllPrefabsAsItems();
 
             Debug.Log(allItems.Count);
-            Debug.Log(JsonUtility.ToJson(allItems));
 
             allItems = allItems.OrderByDescending(i => i.status == ItemInfo.ModelStatus.Pinned)
                 .ThenByDescending(i => i.lastModified)
@@ -51,18 +50,24 @@ namespace Editor.Scripts.Manager
                 Directory.CreateDirectory(directory);
             }
 
-            var itemsInfo = ScriptableObject.CreateInstance<ItemInfoList>();
-            itemsInfo.items = items;
-            var json = JsonUtility.ToJson(itemsInfo.ToData(), true);
-            File.WriteAllText(ItemsInfoPath, json);
+            using (FileStream fileStream = new FileStream(ItemsInfoPath, FileMode.Create))
+            {
+                var itemsInfo = ScriptableObject.CreateInstance<ItemInfoList>();
+                itemsInfo.items = items;
+                BinaryFormatter formatter = new BinaryFormatter();
+                formatter.Serialize(fileStream, itemsInfo.ToData());
+            }
         }
 
         internal static List<ItemInfo> GetItemsInfo()
         {
             if (ItemsInfoList != null) return ItemsInfoList;
-            var json = File.ReadAllText(ItemsInfoPath);
-            var itemsInfo = JsonUtility.FromJson<ItemInfoList>(json);
-            ItemsInfoList = itemsInfo.items;
+
+            using (FileStream fileStream = new FileStream(ItemsInfoPath, FileMode.Open))
+            {
+                BinaryFormatter formatter = new BinaryFormatter();
+                ItemsInfoList = (List<ItemInfo>)formatter.Deserialize(fileStream);
+            }
 
             return ItemsInfoList;
         }

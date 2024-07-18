@@ -3,13 +3,10 @@
         <ui:VisualElement name="toolbar" class="toolbar">
             <ui:VisualElement name="logo" style="background-image: resource(&apos;Images/eden_logo&apos;); width: 170px; height: 64px;" />
             <ui:Button parse-escape-sequences="true" display-tooltip-when-elided="true" name="settings" class="tab-button shadow">
-                <ui:Label text="Settings" />
+                <ui:Label text="프리팹 목록" />
             </ui:Button>
             <ui:Button parse-escape-sequences="true" display-tooltip-when-elided="true" name="setup" class="tab-button">
-                <ui:Label text="Setup" />
-            </ui:Button>
-            <ui:Button parse-escape-sequences="true" display-tooltip-when-elided="true" name="upload" class="tab-button">
-                <ui:Label text="Upload" />
+                <ui:Label text="설정" />
             </ui:Button>
         </ui:VisualElement>
         <ui:VisualElement name="container" class="p-4 grow" />
