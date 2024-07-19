@@ -38,6 +38,29 @@ namespace Editor.Scripts.Util
             return shapeKeys;
         }
 
+        internal static void CleanUpShapeKeys(Mesh mesh, IEnumerable<string> nesessaryShapeKeys)
+        {
+            var shapeKeys = GetAllShapeKeys(mesh, useShapeKeyNormalsAndTangents: false);
+            mesh.ClearBlendShapes();
+            foreach (var name in nesessaryShapeKeys)
+            {
+                var shapeKey = shapeKeys.FirstOrDefault(key => key.Name == name);
+                if (shapeKey == null)
+                {
+                    continue;
+                }
+
+                mesh.AddBlendShapeFrame(
+                    shapeKey.Name,
+                    100,
+                    shapeKey.Positions.ToArray(),
+                    shapeKey.Normals.ToArray(),
+                    shapeKey.Tangents.ToArray()
+                );
+            }
+
+        }
+
         /// <summary>
         /// 指定したメッシュのすべてのシェイプキーを取得します。
         /// </summary>

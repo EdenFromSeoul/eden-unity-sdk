@@ -268,33 +268,6 @@ namespace Editor.Scripts.Manager
                     blendShapeClip.Values = bindingList.ToArray();
                 }
 
-                // foreach (var (preset, expression) in expressionsDict)
-                // {
-                //     // convert vrm10 expression to vrm0 expression
-                //     var blendShapeClip = GetExpression(blendShapeAvatar, preset);
-                //     if (blendShapeClip == null)
-                //     {
-                //         throw new NullReferenceException($"BlendShapeClip for preset {preset} is missing.");
-                //     }
-                //
-                //     var bindingList = new List<BlendShapeBinding>();
-                //
-                //     foreach (var binding in expression.MorphTargetBindings)
-                //     {
-                //         Debug.Log($"Binding: {binding.Index}, {binding.Weight}");
-                //         // weight : 0 ~ 1 to 0 ~ 100
-                //         var weight = binding.Weight * 100;
-                //         bindingList.Add(new BlendShapeBinding
-                //         {
-                //             RelativePath = "vrm-mesh",
-                //             Index = binding.Index,
-                //             Weight = weight
-                //         });
-                //     }
-
-                    // blendShapeClip.Values = bindingList.ToArray();
-                // }
-
                 Debug.Log("Set expressions.");
 
                 var prefab =
