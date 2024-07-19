@@ -155,6 +155,8 @@ namespace Editor.Scripts.Manager
                 tempFolder.EnsureFolder();
                 var tempPrefabPath = tempFolder.Child(TempPrefabName).Value;
 
+                Debug.Log($"Temp prefab path: {tempPrefabPath}");
+
                 // file 있으면 제거
                 if (File.Exists(path))
                 {
@@ -186,14 +188,20 @@ namespace Editor.Scripts.Manager
                 VRMBoneNormalizer.Execute(gameObject, true);
 
                 // 全メッシュ結合
-                var combinedRenderer = CombineMeshesAndSubMeshes.Combine(
-                    gameObject,
-                    notCombineRendererObjectNames: new List<string>(),
-                    destinationObjectName: "vrm-mesh",
-                    savingAsAsset: false
-                );
+                // var combinedRenderer = CombineMeshesAndSubMeshes.Combine(
+                //     gameObject,
+                //     notCombineRendererObjectNames: new List<string>(),
+                //     destinationObjectName: "vrm-mesh",
+                //     savingAsAsset: false
+                // );
 
-                SkinnedMesh.CleanUpShapeKeysVrm0(combinedRenderer.sharedMesh, necessaryShapeKeys);
+                // 모든 skinned mesh renderer의 shared mesh에서 clean up
+                foreach (var renderer in gameObject.GetComponentsInChildren<SkinnedMeshRenderer>())
+                {
+                    SkinnedMesh.CleanUpShapeKeysVrm0(renderer.sharedMesh, necessaryShapeKeys);
+                }
+
+                // SkinnedMesh.CleanUpShapeKeysVrm0(combinedRenderer.sharedMesh, necessaryShapeKeys);
 
                 TabMeshSeparator.SeparationProcessing(gameObject);
 
@@ -257,9 +265,12 @@ namespace Editor.Scripts.Manager
                             // throw new NullReferenceException($"Shape key {names} is missing.");
                         }
 
+                        Debug.Log($"{names} : {index} : {expression.RelativePath}");
+
                         bindingList.Add(new BlendShapeBinding
                         {
-                            RelativePath = "vrm-mesh",
+                            // RelativePath = "vrm-mesh",
+                            RelativePath = expression.RelativePath ?? "Body",
                             Index = index,
                             Weight = 100
                         });

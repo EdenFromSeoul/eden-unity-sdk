@@ -109,29 +109,35 @@ namespace Editor.Scripts.Util
             switch (sourceCollider.shapeType)
             {
                 case VRCPhysBoneColliderBase.ShapeType.Sphere:
-                    if (sourceCollider.insideBounds)
-                    {
-                        targetCollider.ColliderType = VRM10SpringBoneColliderTypes.SphereInside;
-                    }
-                    else
-                    {
-                        targetCollider.ColliderType = VRM10SpringBoneColliderTypes.Sphere;
-                    }
+                    // if (sourceCollider.insideBounds)
+                    // {
+                    //     targetCollider.ColliderType = VRM10SpringBoneColliderTypes.SphereInside;
+                    // }
+                    // else
+                    // {
+                    //     targetCollider.ColliderType = VRM10SpringBoneColliderTypes.Sphere;
+                    // }
+
+                    targetCollider.ColliderType = VRM10SpringBoneColliderTypes.Sphere;
 
                     break;
                 case VRCPhysBoneColliderBase.ShapeType.Capsule:
-                    if (sourceCollider.insideBounds)
-                    {
-                        targetCollider.ColliderType = VRM10SpringBoneColliderTypes.CapsuleInside;
-                    }
-                    else
-                    {
-                        targetCollider.ColliderType = VRM10SpringBoneColliderTypes.Capsule;
-                    }
+                    // if (sourceCollider.insideBounds)
+                    // {
+                    //     targetCollider.ColliderType = VRM10SpringBoneColliderTypes.CapsuleInside;
+                    // }
+                    // else
+                    // {
+                    //     targetCollider.ColliderType = VRM10SpringBoneColliderTypes.Capsule;
+                    // }
+
+                    targetCollider.ColliderType = VRM10SpringBoneColliderTypes.Capsule;
 
                     break;
                 case VRCPhysBoneColliderBase.ShapeType.Plane:
-                    targetCollider.ColliderType = VRM10SpringBoneColliderTypes.Plane;
+                    // targetCollider.ColliderType = VRM10SpringBoneColliderTypes.Plane;
+
+                    targetCollider.ColliderType = VRM10SpringBoneColliderTypes.Sphere;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -151,7 +157,7 @@ namespace Editor.Scripts.Util
                     break;
                 }
                 case VRCPhysBoneColliderBase.ShapeType.Plane:
-                    targetCollider.Normal = sourceCollider.axis;
+                    // targetCollider.Normal = sourceCollider.axis;
                     break;
                 case VRCPhysBoneColliderBase.ShapeType.Sphere:
                     break;

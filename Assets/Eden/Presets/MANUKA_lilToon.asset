@@ -40,7 +40,16 @@ MonoBehaviour:
   - skinnedMeshRendererPath: Body
     index: 330
     shapeKeyName: brow_sad
-  surprised: []
+  surprised:
+  - skinnedMeshRendererPath: Body
+    index: 97
+    shapeKeyName: eye_happy
+  - skinnedMeshRendererPath: Body
+    index: 203
+    shapeKeyName: eye_mukamuka
+  - skinnedMeshRendererPath: Body
+    index: 321
+    shapeKeyName: brow_joy
   relaxed:
   - skinnedMeshRendererPath: Body
     index: 106

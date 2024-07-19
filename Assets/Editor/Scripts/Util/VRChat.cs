@@ -83,6 +83,7 @@ namespace Editor.Scripts.Util
 
                 expressions[preset] = new VRChatExpressionBinding
                 {
+                    RelativePath = "Body",
                     ShapeKeyNames = new[] { shapeKeyName }
                 };
             }
@@ -232,6 +233,7 @@ namespace Editor.Scripts.Util
             {
                 expressions[ExpressionPreset.blink] = new VRChatExpressionBinding
                 {
+                    RelativePath = "Body",
                     ShapeKeyNames = new[]
                     {
                         settings.eyelidsSkinnedMesh.sharedMesh.GetBlendShapeName(settings.eyelidsBlendshapes[0])
@@ -274,6 +276,7 @@ namespace Editor.Scripts.Util
                         }
                         expressions[preset] = new VRChatExpressionBinding
                         {
+                            RelativePath = "Body",
                             ShapeKeyNames = new[] { blinkOneEyeShapeKeyNames.First() }
                         };
                     }

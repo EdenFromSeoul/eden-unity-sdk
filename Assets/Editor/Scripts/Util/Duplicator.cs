@@ -158,7 +158,8 @@ namespace Editor.Scripts.Util
             var path = AssetDatabase.GetAssetPath(source);
             if (!string.IsNullOrEmpty(path))
             {
-                throw new ArgumentException($"source はすでにアセットとして「{path}」に存在します。", nameof(T));
+                Debug.LogWarning($"source はすでにアセットとして「{path}」に存在します。アセットを作成しません。");
+                return source; // 이미 에셋으로 존재하면 source를 반환하고, 새로운 에셋을 만들지 않음.
             }
 
             if (source is AnimatorController)
@@ -403,11 +404,11 @@ namespace Editor.Scripts.Util
             var prefabPath = PrefabUtility.GetPrefabAssetPathOfNearestInstanceRoot(prefabInstance);
             if (faceMeshTransform == null)
             {
-                CombineMeshesAndSubMeshes.Combine(
-                    root: prefabInstance,
-                    notCombineRendererObjectNames,
-                    destinationObjectName: VRChat.AutoBlinkMeshPath
-                );
+                // CombineMeshesAndSubMeshes.Combine(
+                //     root: prefabInstance,
+                //     notCombineRendererObjectNames,
+                //     destinationObjectName: VRChat.AutoBlinkMeshPath
+                // );
             }
             else
             {
