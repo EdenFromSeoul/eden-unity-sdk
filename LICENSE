@@ -19,3 +19,12 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+아래 디렉토리와 경로 있는 파일들은 MPL-2.0 라이센스를 따릅니다.
+The following directories and files are licensed under MPL-2.0.
+- /Assets/Editor/Scripts/Util/*
+- /Assets/Editor/Scripts/Struct/*
+- /Assets/Editor/Scripts/Manager/ConvertManager.cs
+
+Mozilla Public License Version 2.0
+(https://www.mozilla.org/en-US/MPL/2.0/)
