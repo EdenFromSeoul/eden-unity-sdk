@@ -310,8 +310,8 @@ namespace Editor.Resources.Screens.Export
                     selectedBlendShapes
                 );
 
-                var newMeshMap = BoneNormalizer.NormalizeHierarchyFreezeMesh(prefab);
-                BoneNormalizer.Replace(prefab, newMeshMap, true, true);
+                // var newMeshMap = BoneNormalizer.NormalizeHierarchyFreezeMesh(prefab);
+                // BoneNormalizer.Replace(prefab, newMeshMap, true, true);
                 var converter = new ModelExporter();
                 var model = converter.Export(arrayManager, prefab);
 

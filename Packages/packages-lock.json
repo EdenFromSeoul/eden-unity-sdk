@@ -239,44 +239,44 @@
       }
     },
     "com.vrmc.gltf": {
-      "version": "https://github.com/vrm-c/UniVRM.git?path=/Assets/UniGLTF",
+      "version": "https://github.com/vrm-c/UniVRM.git?path=/Assets/UniGLTF#v0.115.0",
       "depth": 0,
       "source": "git",
       "dependencies": {
-        "com.vrmc.vrmshaders": "0.124.1",
+        "com.vrmc.vrmshaders": "0.115.0",
         "com.unity.modules.animation": "1.0.0"
       },
-      "hash": "daf428c37dc61432dada99fddc9896472e7931b2"
+      "hash": "7e052b19b3c0b4cd02e63159fc37db820729554e"
     },
     "com.vrmc.univrm": {
-      "version": "https://github.com/vrm-c/UniVRM.git?path=/Assets/VRM",
+      "version": "https://github.com/vrm-c/UniVRM.git?path=/Assets/VRM#v0.115.0",
       "depth": 0,
       "source": "git",
       "dependencies": {
-        "com.vrmc.vrmshaders": "0.124.1",
-        "com.vrmc.gltf": "0.124.1",
+        "com.vrmc.vrmshaders": "0.115.0",
+        "com.vrmc.gltf": "0.115.0",
         "com.unity.ugui": "1.0.0"
       },
-      "hash": "daf428c37dc61432dada99fddc9896472e7931b2"
+      "hash": "7e052b19b3c0b4cd02e63159fc37db820729554e"
     },
     "com.vrmc.vrm": {
-      "version": "https://github.com/vrm-c/UniVRM.git?path=/Assets/VRM10",
+      "version": "https://github.com/vrm-c/UniVRM.git?path=/Assets/VRM10#v0.115.0",
       "depth": 0,
       "source": "git",
       "dependencies": {
-        "com.vrmc.vrmshaders": "0.124.1",
-        "com.vrmc.gltf": "0.124.1"
+        "com.vrmc.vrmshaders": "0.115.0",
+        "com.vrmc.gltf": "0.115.0"
       },
-      "hash": "daf428c37dc61432dada99fddc9896472e7931b2"
+      "hash": "7e052b19b3c0b4cd02e63159fc37db820729554e"
     },
     "com.vrmc.vrmshaders": {
-      "version": "https://github.com/vrm-c/UniVRM.git?path=/Assets/VRMShaders",
+      "version": "https://github.com/vrm-c/UniVRM.git?path=/Assets/VRMShaders#v0.115.0",
       "depth": 0,
       "source": "git",
       "dependencies": {
         "com.unity.modules.imageconversion": "1.0.0"
       },
-      "hash": "daf428c37dc61432dada99fddc9896472e7931b2"
+      "hash": "7e052b19b3c0b4cd02e63159fc37db820729554e"
     },
     "jp.lilxyzw.liltoon": {
       "version": "https://github.com/lilxyzw/lilToon.git?path=Assets/lilToon#dev",
@@ -284,26 +284,6 @@
       "source": "git",
       "dependencies": {},
       "hash": "5ed3507003b3cf92eb1879a92a30408615134781"
-    },
-    "jp.pokemori.univrm-extensions": {
-      "version": "10.1.0",
-      "depth": 1,
-      "source": "registry",
-      "dependencies": {
-        "com.vrmc.univrm": "0.121.0"
-      },
-      "url": "https://package.openupm.com"
-    },
-    "jp.pokemori.vrm-converter-for-vrchat": {
-      "version": "41.1.0",
-      "depth": 0,
-      "source": "registry",
-      "dependencies": {
-        "com.vrchat.avatars": "3.5.0",
-        "com.vrmc.univrm": "0.121.0",
-        "jp.pokemori.univrm-extensions": "10.1.0"
-      },
-      "url": "https://package.openupm.com"
     },
     "nadena.dev.modular-avatar": {
       "version": "file:nadena.dev.modular-avatar",

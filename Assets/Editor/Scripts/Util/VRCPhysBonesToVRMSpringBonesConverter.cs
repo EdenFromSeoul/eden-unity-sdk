@@ -1,3 +1,22 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ * Original Code: https://github.com/esperecyan/VRMConverterForVRChat/blob/master/Editor/Utilities/SkinnedMeshUtility.cs
+ * Initial Developer: esperecyan
+ *
+ * Alternatively, the contents of this file may be used under the terms
+ * of the MIT license (the "MIT License"), in which case the provisions
+ * of the MIT License are applicable instead of those above.
+ * If you wish to allow use of your version of this file only under the
+ * terms of the MIT License and not to allow others to use your version
+ * of this file under the MPL, indicate your decision by deleting the
+ * provisions above and replace them with the notice and other provisions
+ * required by the MIT License. If you do not delete the provisions above,
+ * a recipient may use your version of this file under either the MPL or
+ * the MIT License.
+ */
 using System.Collections.Generic;
 using System.Linq;
 using UniGLTF;
@@ -36,21 +55,21 @@ namespace Editor.Scripts.Util
             BoneInfo boneInfo
         )
         {
-            var stiffness = vrcPhysBoneParameters.Spring * 2.0f;
-            var drag = vrcPhysBoneParameters.Stiffness * 4.0f;
-            var gravity = 0.0f;
-
-            if (vrcPhysBoneParameters.Gravity != 0)
-            {
-                stiffness = (vrcPhysBoneParameters.Spring / (vrcPhysBoneParameters.Gravity + 1)) * 2.0f;
-                gravity = vrcPhysBoneParameters.Gravity * vrcPhysBoneParameters.Pull;
-            }
+            // var stiffness = vrcPhysBoneParameters.Spring * 2.0f;
+            // var drag = vrcPhysBoneParameters.Stiffness * 4.0f;
+            // var gravity = 0.0f;
+            //
+            // if (vrcPhysBoneParameters.Gravity != 0)
+            // {
+            //     stiffness = (vrcPhysBoneParameters.Spring / (vrcPhysBoneParameters.Gravity + 1)) * 2.0f;
+            //     gravity = vrcPhysBoneParameters.Gravity * vrcPhysBoneParameters.Pull;
+            // }
 
             return new VRMSpringBoneParameters
             {
-                StiffnessForce = stiffness,
-                DragForce = drag,
-                GravityPower = gravity,
+                StiffnessForce = vrcPhysBoneParameters.Pull * 4.0f,
+                DragForce = vrcPhysBoneParameters.Spring,
+                GravityPower = vrcPhysBoneParameters.Gravity * 20.0f,
             };
         }
 
@@ -110,6 +129,18 @@ namespace Editor.Scripts.Util
         /// <param name="converter"></param>
         private static void SetSpringBoneColliderGroups(Converter converter)
         {
+            var vrcPhysBoneColliders = converter.SourceGameObject.GetComponentsInChildren<VRCPhysBoneCollider>();
+
+            foreach (var collider in vrcPhysBoneColliders)
+            {
+                // rootTransform이 설정된 경우 부모를 rootTransform으로 설정
+                if (collider.rootTransform != null)
+                {
+                    collider.transform.SetParent(collider.rootTransform, false);
+                    Debug.Log("rootTransform 설정됨: " + collider.transform.RelativePathFrom(converter.SourceGameObject.transform));
+                }
+            }
+
             foreach (var sourceColliders in converter.SourceGameObject.GetComponentsInChildren<
 #if VRC_SDK_VRCSDK3
                 VRCPhysBoneCollider

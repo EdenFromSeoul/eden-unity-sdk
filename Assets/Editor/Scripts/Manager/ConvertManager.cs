@@ -1,3 +1,22 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ * Original Code: https://github.com/esperecyan/VRMConverterForVRChat
+ * Initial Developer: esperecyan
+ *
+ * Alternatively, the contents of this file may be used under the terms
+ * of the MIT license (the "MIT License"), in which case the provisions
+ * of the MIT License are applicable instead of those above.
+ * If you wish to allow use of your version of this file only under the
+ * terms of the MIT License and not to allow others to use your version
+ * of this file under the MPL, indicate your decision by deleting the
+ * provisions above and replace them with the notice and other provisions
+ * required by the MIT License. If you do not delete the provisions above,
+ * a recipient may use your version of this file under either the MPL or
+ * the MIT License.
+ */
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -93,7 +112,9 @@ namespace Editor.Scripts.Manager
             string path,
             GameObject gameObject,
             VRMMetaObject vrmMetaObject,
-            IDictionary<string, List<BlendShapeData>> selectedBlendShapes)
+            IDictionary<string, List<BlendShapeData>> selectedBlendShapes,
+            bool removeUnusedBlendShapes = true
+            )
         {
             try
             {
@@ -119,6 +140,20 @@ namespace Editor.Scripts.Manager
                     .Where(mesh => mesh != null)
                     .ToList();
                 Debug.Log($"Number of non-null sharedMeshes: {sharedMeshes.Count}");
+
+                // weight가 0이 아닌 shape key만 가져오기
+                var usedShapeKeys = new List<string>();
+                foreach (var renderer in gameObject.GetComponentsInChildren<SkinnedMeshRenderer>())
+                {
+                    var mesh = renderer.sharedMesh;
+                    for (int i = 0; i < mesh.blendShapeCount; i++)
+                    {
+                        if (renderer.GetBlendShapeWeight(i) > 0)
+                        {
+                            usedShapeKeys.Add(mesh.GetBlendShapeName(i));
+                        }
+                    }
+                }
 
 
                 // Debugging Step 3: Get all shape keys
@@ -149,11 +184,22 @@ namespace Editor.Scripts.Manager
                     necessaryShapeKeys.AddRange(expressionBinding.ShapeKeyNames.ToList());
                 }
 
+                // used이지만 necessary에 없는 shape key 추가
+                foreach (var shapeKey in usedShapeKeys)
+                {
+                    if (!necessaryShapeKeys.Contains(shapeKey))
+                    {
+                        necessaryShapeKeys.Add(shapeKey);
+                    }
+                }
+
                 necessaryShapeKeys = necessaryShapeKeys.Distinct().ToList();
 
                 var tempFolder = UnityPath.FromUnityPath(TempPath);
                 tempFolder.EnsureFolder();
                 var tempPrefabPath = tempFolder.Child(TempPrefabName).Value;
+
+                Debug.Log($"Temp prefab path: {tempPrefabPath}");
 
                 // file 있으면 제거
                 if (File.Exists(path))
@@ -186,14 +232,22 @@ namespace Editor.Scripts.Manager
                 VRMBoneNormalizer.Execute(gameObject, true);
 
                 // 全メッシュ結合
-                var combinedRenderer = CombineMeshesAndSubMeshes.Combine(
-                    gameObject,
-                    notCombineRendererObjectNames: new List<string>(),
-                    destinationObjectName: "vrm-mesh",
-                    savingAsAsset: false
-                );
+                // var combinedRenderer = CombineMeshesAndSubMeshes.Combine(
+                //     gameObject,
+                //     notCombineRendererObjectNames: new List<string>(),
+                //     destinationObjectName: "vrm-mesh",
+                //     savingAsAsset: false
+                // );
 
-                SkinnedMesh.CleanUpShapeKeysVrm0(combinedRenderer.sharedMesh, necessaryShapeKeys);
+                // 모든 skinned mesh renderer의 shared mesh에서 clean up
+                if (removeUnusedBlendShapes)
+                {
+                    foreach (var renderer in gameObject.GetComponentsInChildren<SkinnedMeshRenderer>())
+                    {
+                        SkinnedMesh.CleanUpShapeKeysVrm0(renderer.sharedMesh, necessaryShapeKeys);
+                    }
+                    // SkinnedMesh.CleanUpShapeKeysVrm0(combinedRenderer.sharedMesh, necessaryShapeKeys);
+                }
 
                 TabMeshSeparator.SeparationProcessing(gameObject);
 
@@ -257,9 +311,12 @@ namespace Editor.Scripts.Manager
                             // throw new NullReferenceException($"Shape key {names} is missing.");
                         }
 
+                        Debug.Log($"{names} : {index} : {expression.RelativePath}");
+
                         bindingList.Add(new BlendShapeBinding
                         {
-                            RelativePath = "vrm-mesh",
+                            // RelativePath = "vrm-mesh",
+                            RelativePath = expression.RelativePath ?? "Body",
                             Index = index,
                             Weight = 100
                         });
@@ -392,7 +449,7 @@ namespace Editor.Scripts.Manager
                 }
                 catch (Exception e)
                 {
-                    //Debug.Log(material.name + "Exception : " + e);
+                    Debug.LogException(e);
                 }
 
                 Material m = AssetDatabase.LoadAssetAtPath(path, typeof(Material)) as Material;
@@ -494,6 +551,18 @@ namespace Editor.Scripts.Manager
                     continue;
                 }
                 Object.DestroyImmediate(component);
+            }
+
+            // particle system 모두 제거
+            foreach (var particleSystem in gameObject.GetComponentsInChildren<ParticleSystem>())
+            {
+                Object.DestroyImmediate(particleSystem);
+            }
+
+            // particle system renderer 모두 제거
+            foreach (var particleSystemRenderer in gameObject.GetComponentsInChildren<ParticleSystemRenderer>())
+            {
+                Object.DestroyImmediate(particleSystemRenderer);
             }
         }
 
