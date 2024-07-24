@@ -141,6 +141,20 @@ namespace Editor.Scripts.Manager
                     .ToList();
                 Debug.Log($"Number of non-null sharedMeshes: {sharedMeshes.Count}");
 
+                // weight가 0이 아닌 shape key만 가져오기
+                var usedShapeKeys = new List<string>();
+                foreach (var renderer in gameObject.GetComponentsInChildren<SkinnedMeshRenderer>())
+                {
+                    var mesh = renderer.sharedMesh;
+                    for (int i = 0; i < mesh.blendShapeCount; i++)
+                    {
+                        if (renderer.GetBlendShapeWeight(i) > 0)
+                        {
+                            usedShapeKeys.Add(mesh.GetBlendShapeName(i));
+                        }
+                    }
+                }
+
 
                 // Debugging Step 3: Get all shape keys
                 var shapeKeyNames = sharedMeshes
@@ -168,6 +182,15 @@ namespace Editor.Scripts.Manager
                         Debug.Log($"Shape key: {names}");
                     }
                     necessaryShapeKeys.AddRange(expressionBinding.ShapeKeyNames.ToList());
+                }
+
+                // used이지만 necessary에 없는 shape key 추가
+                foreach (var shapeKey in usedShapeKeys)
+                {
+                    if (!necessaryShapeKeys.Contains(shapeKey))
+                    {
+                        necessaryShapeKeys.Add(shapeKey);
+                    }
                 }
 
                 necessaryShapeKeys = necessaryShapeKeys.Distinct().ToList();
@@ -426,7 +449,7 @@ namespace Editor.Scripts.Manager
                 }
                 catch (Exception e)
                 {
-                    //Debug.Log(material.name + "Exception : " + e);
+                    Debug.LogException(e);
                 }
 
                 Material m = AssetDatabase.LoadAssetAtPath(path, typeof(Material)) as Material;
@@ -528,6 +551,18 @@ namespace Editor.Scripts.Manager
                     continue;
                 }
                 Object.DestroyImmediate(component);
+            }
+
+            // particle system 모두 제거
+            foreach (var particleSystem in gameObject.GetComponentsInChildren<ParticleSystem>())
+            {
+                Object.DestroyImmediate(particleSystem);
+            }
+
+            // particle system renderer 모두 제거
+            foreach (var particleSystemRenderer in gameObject.GetComponentsInChildren<ParticleSystemRenderer>())
+            {
+                Object.DestroyImmediate(particleSystemRenderer);
             }
         }
 

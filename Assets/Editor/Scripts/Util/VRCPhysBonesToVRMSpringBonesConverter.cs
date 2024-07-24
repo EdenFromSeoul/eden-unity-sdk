@@ -129,6 +129,18 @@ namespace Editor.Scripts.Util
         /// <param name="converter"></param>
         private static void SetSpringBoneColliderGroups(Converter converter)
         {
+            var vrcPhysBoneColliders = converter.SourceGameObject.GetComponentsInChildren<VRCPhysBoneCollider>();
+
+            foreach (var collider in vrcPhysBoneColliders)
+            {
+                // rootTransform이 설정된 경우 부모를 rootTransform으로 설정
+                if (collider.rootTransform != null)
+                {
+                    collider.transform.SetParent(collider.rootTransform, false);
+                    Debug.Log("rootTransform 설정됨: " + collider.transform.RelativePathFrom(converter.SourceGameObject.transform));
+                }
+            }
+
             foreach (var sourceColliders in converter.SourceGameObject.GetComponentsInChildren<
 #if VRC_SDK_VRCSDK3
                 VRCPhysBoneCollider
