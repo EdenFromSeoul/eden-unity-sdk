@@ -75,7 +75,7 @@ namespace Editor.Scripts.Manager
 
         internal static List<ItemInfo> GetAllPrefabsAsItems(bool preview = false)
         {
-            var guids = AssetUtility.FindAssetsExcludingDirectory("t:Prefab", new[] { "Resources", "Eden" });
+            var guids = AssetUtility.FindAssetsExcludingDirectory("t:Prefab", new[] { "Resources", "Eden", "lilToon" });
 
             return guids
                 .Select(AssetDatabase.GUIDToAssetPath)
