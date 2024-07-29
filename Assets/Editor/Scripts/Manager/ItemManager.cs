@@ -3,6 +3,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
+using Editor.Scripts.Util;
 using UnityEditor;
 using UnityEngine;
 
@@ -74,9 +75,10 @@ namespace Editor.Scripts.Manager
 
         internal static List<ItemInfo> GetAllPrefabsAsItems(bool preview = false)
         {
-            var guids = AssetDatabase.FindAssets("t:Prefab", new[] { "Assets" });
+            var guids = AssetUtility.FindAssetsExcludingDirectory("t:Prefab", new[] { "Resources", "Eden", "lilToon" });
 
-            return guids.Select(guid => AssetDatabase.GUIDToAssetPath(guid))
+            return guids
+                .Select(AssetDatabase.GUIDToAssetPath)
                 .Select(GetItem)
                 .OrderByDescending(p => p.lastModified)
                 .ToList();

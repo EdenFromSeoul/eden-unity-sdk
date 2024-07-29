@@ -125,5 +125,52 @@ namespace Editor.Scripts.Util
 
             return destinationFolderUnityPath.Child(instance.name + ".asset").Value;
         }
+        
+        /// <summary>
+        /// 특정 디렉토리를 제외하고 Asset을 검색합니다. (guid 반환)
+        /// </summary>
+        /// <param name="searchFilter"></param>
+        /// <param name="excludeDirectories"></param>
+        /// <returns></returns>
+        public static string[] FindAssetsExcludingDirectory(string searchFilter, string[] excludeDirectories)
+        {
+            string[] allDirectories = Directory.GetDirectories("Assets", "*", SearchOption.AllDirectories);
+            List<string> includedDirectories = new List<string>();
+
+            foreach (var directory in allDirectories)
+            {
+                bool exclude = false;
+                foreach (var excludeDirectory in excludeDirectories)
+                {
+                    if (directory.StartsWith(Path.Combine("Assets", excludeDirectory)))
+                    {
+                        Debug.Log($"Excluding directory: {directory}");
+                        exclude = true;
+                        break;
+                    }
+                }
+                if (!exclude)
+                {
+                    includedDirectories.Add(directory);
+                }
+            }
+            
+
+            List<string> foundAssets = new List<string>();
+            foreach (var directory in includedDirectories)
+            {
+                Debug.Log($"Searching in directory: {directory}");
+                string[] guids = AssetDatabase.FindAssets(searchFilter, new[] { directory });
+                foreach (var guid in guids)
+                {
+                    if (!foundAssets.Contains(guid))
+                    {
+                        foundAssets.Add(guid);
+                    }
+                }
+            }
+
+            return foundAssets.ToArray();
+        }
     }
 }

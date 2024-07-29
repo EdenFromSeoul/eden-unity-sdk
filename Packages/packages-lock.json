@@ -1,12 +1,5 @@
 {
   "dependencies": {
-    "com.github.sayunana.liltoon2mtoon": {
-      "version": "https://github.com/sayunana/lilToon2MToon.git?path=Assets/sayunana",
-      "depth": 0,
-      "source": "git",
-      "dependencies": {},
-      "hash": "3c7be3c37159979cb37706b25c487f624e7a4a96"
-    },
     "com.unity.burst": {
       "version": "1.8.12",
       "depth": 1,
@@ -239,51 +232,44 @@
       }
     },
     "com.vrmc.gltf": {
-      "version": "https://github.com/vrm-c/UniVRM.git?path=/Assets/UniGLTF#v0.115.0",
+      "version": "0.115.0",
       "depth": 0,
-      "source": "git",
+      "source": "registry",
       "dependencies": {
         "com.vrmc.vrmshaders": "0.115.0",
         "com.unity.modules.animation": "1.0.0"
       },
-      "hash": "7e052b19b3c0b4cd02e63159fc37db820729554e"
+      "url": "https://package.openupm.com"
     },
     "com.vrmc.univrm": {
-      "version": "https://github.com/vrm-c/UniVRM.git?path=/Assets/VRM#v0.115.0",
+      "version": "0.115.0",
       "depth": 0,
-      "source": "git",
+      "source": "registry",
       "dependencies": {
         "com.vrmc.vrmshaders": "0.115.0",
         "com.vrmc.gltf": "0.115.0",
         "com.unity.ugui": "1.0.0"
       },
-      "hash": "7e052b19b3c0b4cd02e63159fc37db820729554e"
+      "url": "https://package.openupm.com"
     },
     "com.vrmc.vrm": {
-      "version": "https://github.com/vrm-c/UniVRM.git?path=/Assets/VRM10#v0.115.0",
+      "version": "0.115.0",
       "depth": 0,
-      "source": "git",
+      "source": "registry",
       "dependencies": {
         "com.vrmc.vrmshaders": "0.115.0",
         "com.vrmc.gltf": "0.115.0"
       },
-      "hash": "7e052b19b3c0b4cd02e63159fc37db820729554e"
+      "url": "https://package.openupm.com"
     },
     "com.vrmc.vrmshaders": {
-      "version": "https://github.com/vrm-c/UniVRM.git?path=/Assets/VRMShaders#v0.115.0",
-      "depth": 0,
-      "source": "git",
+      "version": "0.115.0",
+      "depth": 1,
+      "source": "registry",
       "dependencies": {
         "com.unity.modules.imageconversion": "1.0.0"
       },
-      "hash": "7e052b19b3c0b4cd02e63159fc37db820729554e"
-    },
-    "jp.lilxyzw.liltoon": {
-      "version": "https://github.com/lilxyzw/lilToon.git?path=Assets/lilToon#dev",
-      "depth": 0,
-      "source": "git",
-      "dependencies": {},
-      "hash": "5ed3507003b3cf92eb1879a92a30408615134781"
+      "url": "https://package.openupm.com"
     },
     "nadena.dev.modular-avatar": {
       "version": "file:nadena.dev.modular-avatar",
