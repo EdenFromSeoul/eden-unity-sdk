@@ -13,7 +13,7 @@ namespace Editor.Resources.Components
             AddToClassList("blend-shape-item");
 
             // dropdown
-            _dropdown = new DropdownField("쉐이프키", blendShapeKeys, 0);
+            _dropdown = new DropdownField("Shape Key", blendShapeKeys, 0);
             _dropdown.RegisterValueChangedCallback(evt =>
             {
                 onShapeKeySelected?.Invoke(evt.previousValue, evt.newValue);

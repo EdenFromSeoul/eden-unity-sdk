@@ -1,0 +1,76 @@
+﻿{
+  "items": [
+    {
+      "key": "prefab_list",
+      "value": "Prefab Catalog"
+    },
+    {
+      "key": "manage_prefabs_from_unitypackage",
+      "value": "Manage prefabs called from Unity package files"
+    },
+    {
+      "key": "add_prefabs_and_use_features",
+      "value": "Add prefabs and try various features"
+    },
+    {
+      "key": "import_prefab",
+      "value": "Import Prefab"
+    },
+    {
+      "key": "settings",
+      "value": "Settings"
+    },
+    {
+      "key": "export",
+      "value": "Export"
+    },
+    {
+      "key": "save_as_unitypackage",
+      "value": "Save as .unitypackage"
+    },
+    {
+      "key": "save_as_vrm",
+      "value": "Save as .vrm"
+    },
+    {
+      "key": "vrm_export_settings",
+      "value": "VRM Export Settings"
+    },
+    {
+      "key": "information",
+      "value": "Information"
+    },
+    {
+      "key": "title",
+      "value": "Title"
+    },
+    {
+      "key": "enter_character_name",
+      "value": "Enter character name"
+    },
+    {
+      "key": "version",
+      "value": "Version"
+    },
+    {
+      "key": "enter_version",
+      "value": "Enter version"
+    },
+    {
+      "key": "creator",
+      "value": "Creator"
+    },
+    {
+      "key": "enter_creator_name",
+      "value": "Enter creator name"
+    },
+    {
+      "key": "expression",
+      "value": "Expression"
+    },
+    {
+      "key": "language",
+      "value": "Language"
+    }
+  ]
+}
