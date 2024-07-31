@@ -220,13 +220,15 @@ ItemButton Label {
     background-color: var(--gray-50);
 }
 
-.blend-shape-item DropdownField VisualElement {
+.blend-shape-item DropdownField VisualElement,
+EnumField VisualElement {
     background-color: white;
     border-color: var(--default);
     padding: 6px 16px;
 }
 
-.blend-shape-item DropdownField VisualElement PopupTextElement {
+.blend-shape-item DropdownField VisualElement PopupTextElement,
+EnumField VisualElement TextElement {
     color: var(--black);
     background-color: white;
 }
@@ -242,6 +244,12 @@ TextField {
 TextField Label {
     color: var(--black);
     margin-bottom: 4px;
+}
+
+EnumField Label {
+    color: var(--black);
+    margin-bottom: 4px;
+    -unity-text-align: middle-center;
 }
 
 TextField TextInput {
