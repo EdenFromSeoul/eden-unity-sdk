@@ -1,0 +1,76 @@
+﻿{
+  "items": [
+    {
+      "key": "prefab_list",
+      "value": "프리팹 목록"
+    },
+    {
+      "key": "manage_prefabs_from_unitypackage",
+      "value": "유니티패키지파일에서 불러온 프리팹을 관리합니다"
+    },
+    {
+      "key": "add_prefabs_and_use_features",
+      "value": "프리팹을 추가하고 다양한 기능을 사용해보세요"
+    },
+    {
+      "key": "import_prefab",
+      "value": "프리팹 가져오기"
+    },
+    {
+      "key": "settings",
+      "value": "설정"
+    },
+    {
+      "key": "export",
+      "value": "내보내기"
+    },
+    {
+      "key": "save_as_unitypackage",
+      "value": ".unitypackage로 저장"
+    },
+    {
+      "key": "save_as_vrm",
+      "value": ".vrm으로 저장"
+    },
+    {
+      "key": "vrm_export_settings",
+      "value": "VRM 내보내기 설정"
+    },
+    {
+      "key": "information",
+      "value": "정보"
+    },
+    {
+      "key": "title",
+      "value": "제목"
+    },
+    {
+      "key": "enter_character_name",
+      "value": "캐릭터의 이름을 입력해주세요"
+    },
+    {
+      "key": "version",
+      "value": "버전"
+    },
+    {
+      "key": "enter_version",
+      "value": "버전을 입력해주세요"
+    },
+    {
+      "key": "creator",
+      "value": "제작자"
+    },
+    {
+      "key": "enter_creator_name",
+      "value": "제작자의 이름을 입력해주세요"
+    },
+    {
+      "key": "expression",
+      "value": "감정표현"
+    },
+    {
+      "key": "language",
+      "value": "언어"
+    }
+  ]
+}

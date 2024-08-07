@@ -47,10 +47,13 @@ namespace Editor.Resources.Screens.Export
         private static Button _exportButton;
         private static Button _backButton;
         private static Button _exportVrmButton;
+        private static Label _infoLabel;
         private static TextField _nameField;
         private static TextField _authorField;
         private static TextField _versionField;
         private static Preview _preview;
+        private static Label _title;
+        private static Label _subtitle;
 
         private static Button _happyButton;
         private static Button _angryButton;
@@ -58,6 +61,7 @@ namespace Editor.Resources.Screens.Export
         private static Button _relaxedButton;
         private static Button _surprisedButton;
 
+        private static Label _expressionGroupLabel;
         private static VisualElement _expressionPanel;
         private static Button _expressionCloseButton;
         private static Label _expressionLabel;
@@ -81,6 +85,7 @@ namespace Editor.Resources.Screens.Export
             _preview = new Preview(_container.Q("preview"), EdenStudioInitializer.SelectedItem?.path ?? "");
             _preview.ShowContent();
 
+            _infoLabel = _container.Q<Label>("infoLabel");
             _nameField = _container.Q<TextField>("nameField");
             _authorField = _container.Q<TextField>("authorField");
             _versionField = _container.Q<TextField>("versionField");
@@ -91,10 +96,13 @@ namespace Editor.Resources.Screens.Export
             _relaxedButton = _container.Q<Button>("relaxedButton");
             _surprisedButton = _container.Q<Button>("surprisedButton");
 
+            _expressionGroupLabel = _container.Q<Label>("expressionGroupLabel");
             _expressionPanel = _container.Q("expressionPanel");
             _expressionLabel = _container.Q<Label>("expressionLabel");
             _expressionScrollView = _container.Q<ScrollView>("expressionScroll");
             _expressionCloseButton = _container.Q<Button>("expressionCloseButton");
+            _title = _container.Q<Label>("title");
+            _subtitle = _container.Q<Label>("subtitle");
 
             EdenStudioInitializer.OnSelectedItemChanged += OnSelectedItemChanged;
 
@@ -102,6 +110,8 @@ namespace Editor.Resources.Screens.Export
             {
                 OnSelectedItemChanged(EdenStudioInitializer.SelectedItem);
             }
+            
+            LocalizationManager.OnLanguageChanged += RefreshLocalization;
 
             _happyButton.clicked += () => OpenExpressionPanel("happy");
             _angryButton.clicked += () => OpenExpressionPanel("angry");
@@ -109,11 +119,36 @@ namespace Editor.Resources.Screens.Export
             _relaxedButton.clicked += () => OpenExpressionPanel("relaxed");
             _surprisedButton.clicked += () => OpenExpressionPanel("surprised");
             _expressionCloseButton.clicked += () => _expressionPanel.style.display = DisplayStyle.None;
+            
+            RefreshLocalization();
+        }
+
+        private static void RefreshLocalization()
+        {
+            _title.text = LocalizationManager.GetLocalizedValue("vrm_export_settings");
+            _subtitle.text = LocalizationManager.GetLocalizedValue("manage_prefabs_from_unitypackage");
+            _infoLabel.text = LocalizationManager.GetLocalizedValue("information");
+            _nameField.label = LocalizationManager.GetLocalizedValue("title");
+            _nameField.value = LocalizationManager.GetLocalizedValue("enter_character_name");
+            _nameField.tooltip = LocalizationManager.GetLocalizedValue("enter_character_name");
+            _authorField.label = LocalizationManager.GetLocalizedValue("creator");
+            _authorField.value = LocalizationManager.GetLocalizedValue("enter_creator_name");
+            _authorField.tooltip = LocalizationManager.GetLocalizedValue("enter_creator_name");
+            _versionField.label = LocalizationManager.GetLocalizedValue("version");
+            _versionField.value = LocalizationManager.GetLocalizedValue("enter_version");
+            _versionField.tooltip = LocalizationManager.GetLocalizedValue("enter_version");
+            _expressionGroupLabel.text = LocalizationManager.GetLocalizedValue("expression");
+            _happyButton.text = LocalizationManager.GetLocalizedValue("settings");
+            _angryButton.text = LocalizationManager.GetLocalizedValue("settings");
+            _sadButton.text = LocalizationManager.GetLocalizedValue("settings");
+            _relaxedButton.text = LocalizationManager.GetLocalizedValue("settings");
+            _surprisedButton.text = LocalizationManager.GetLocalizedValue("settings");
+            _exportButton.text = LocalizationManager.GetLocalizedValue("export");
         }
 
         private static void OpenExpressionPanel(string expression)
         {
-            _expressionLabel.text = $"감정표현: {expression}";
+            _expressionLabel.text = $"{LocalizationManager.GetLocalizedValue("expression")}: {expression}";
             _expressionScrollView.Clear();
             var selectedItem = EdenStudioInitializer.SelectedItem;
             var preset = PresetManager.LoadOrCreateVrm10MorphTargetPreset(selectedItem.modelName);
@@ -143,7 +178,7 @@ namespace Editor.Resources.Screens.Export
             selectedItem.SelectedBlendShapes[expression] = selectedBlendShapeKeys;
 
             var availableBlendShapeKeys = _blendShapeKeys.Except(selectedBlendShapeKeys.Select(b => b.shapeKeyName)).ToList();
-            availableBlendShapeKeys.Insert(0, "쉐이프키를 선택해주세요");
+            availableBlendShapeKeys.Insert(0, "Select Shapekey");
 
             foreach (var selectedBlendShape in selectedBlendShapeKeys)
             {
@@ -167,7 +202,7 @@ namespace Editor.Resources.Screens.Export
                 _expressionScrollView.Add(newBlendShapeItem);
             })
             {
-                text = "쉐이프키 추가하기"
+                text = "+"
             };
             addButton.AddToClassList("addButton");
             _expressionScrollView.Add(addButton);
@@ -177,14 +212,14 @@ namespace Editor.Resources.Screens.Export
         private static void OnShapeKeySelected(string expression, string oldKey, string key)
         {
             var selectedItem = EdenStudioInitializer.SelectedItem;
-            if (oldKey != null && oldKey != "쉐이프키를 선택해주세요")
+            if (oldKey != null && oldKey != "Select Shapekey")
             {
                 // remove old key
                 var oldBlendShapeData = _blendShapeDataMap[oldKey];
                 selectedItem.SelectedBlendShapes[expression].Remove(oldBlendShapeData);
             }
 
-            if (key != null && key != "쉐이프키를 선택해주세요")
+            if (key != null && key != "Select Shapekey")
             {
                 // add new key
                 var blendShapeData = _blendShapeDataMap[key];
