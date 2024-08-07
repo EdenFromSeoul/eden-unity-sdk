@@ -1,10 +1,12 @@
+using System;
+using System.Reflection;
 using UnityEngine;
 using UnityEditor;
 using nadena.dev.modular_avatar.core;
 using VRC.SDK3.Avatars.Components;
 using VRC.SDK3.Avatars.ScriptableObjects;
-using System.Collections.Generic;
 using UnityEditor.Animations;
+using VRC.SDKBase;
 
 public class MakeAnimationToggleWindow : EditorWindow
 {
@@ -13,46 +15,101 @@ public class MakeAnimationToggleWindow : EditorWindow
     private VRCExpressionsMenu _closet;
     private AnimatorController animatorController;
 
-    [MenuItem("Window/MakeAnimationToggle")]
+    [MenuItem("Window/EasyMakeCloset")]
     public static void ShowWindow()
     {
-        GetWindow<MakeAnimationToggleWindow>("MakeAnimationToggle");
+        GetWindow<MakeAnimationToggleWindow>("EasyMakeCloset");
     }
 
     private void OnGUI()
     {
-        GUILayout.Label("Select an object to animate", EditorStyles.boldLabel);
+        GUILayout.Label("Select an object to Make Closet", EditorStyles.boldLabel);
 
         // 오브젝트를 선택할 수 있는 필드
-        selectedObject = (GameObject)EditorGUILayout.ObjectField("Animation Target", selectedObject, typeof(GameObject), true);
+        selectedObject = (GameObject)EditorGUILayout.ObjectField("Target(Clothes)", selectedObject, typeof(GameObject), true);
 
-        if (GUILayout.Button("Make Toggle Animation and start"))
+        if (GUILayout.Button("Make Closet"))
         {
-            if (selectedObject)
+            GameObject avatarObject = FindAvatarDescriptor();
+            
+            if (selectedObject && avatarObject)
             {
-                CreateAnimation();
-                AddComponents();
+                GameObject clothes = CheckAlreadyExists(avatarObject);
+                if (!clothes)
+                {
+                    GameObject instance = Instantiate(selectedObject, avatarObject.transform);
+                    instance.name = selectedObject.name; // 인스턴스 이름을 원본 프리팹 이름과 동일하게 설정
 
-                // EditorApplication.EnterPlaymode();
-                //this.Close();
+                    // MenuCommand를 생성하여 SetupOutfit 메서드에 전달
+
+                    Selection.activeObject = instance;
+                    MenuCommand menuCommand = new MenuCommand(instance);
+
+                    // 리플렉션을 사용하여 내부 메서드 호출
+                    InvokeInternalSetupOutfit(menuCommand);
+                    Selection.activeObject = null;
+
+                    CreateAnimation(instance);
+                    AddComponents(instance);
+                }
+                else
+                {
+                    DestroyImmediate(clothes);
+                }
             }
-            else
+            else if (!selectedObject)
             {
                 EditorUtility.DisplayDialog("Error", "Please select a GameObject", "OK");
+            }
+            else if (!avatarObject)
+            {
+                EditorUtility.DisplayDialog("Error", "Please make avatar instance in level", "OK");
             }
         }
     }
 
-    /*
-     * CreatAnimation은 오브젝트의 활성화/비활성화 상태를 bool parameter에 입력 마다 전환되는 애니메이션을 만들고,
-     * Assets/MakeToggle/{obj.name}에 저장합니다.
-     */
-    private void CreateAnimation()
+    private GameObject CheckAlreadyExists(GameObject avatarObject)
+    {
+        Transform foundTransform = avatarObject.transform.Find(selectedObject.name);
+        return foundTransform ? foundTransform.gameObject : null;
+    }
+    
+    private void InvokeInternalSetupOutfit(MenuCommand menuCommand)
+    {
+        // 어셈블리 로드
+        Assembly assembly = Assembly.LoadFrom("Library\\ScriptAssemblies\\nadena.dev.modular-avatar.core.editor.dll");
+        // EasySetupOutfit 타입 가져오기
+        var type = assembly.GetType("nadena.dev.modular_avatar.core.editor.EasySetupOutfit");
+        
+        // SetupOutfit 메서드 가져오기
+        MethodInfo methodInfo = type.GetMethod("SetupOutfit", BindingFlags.Static | BindingFlags.NonPublic);
+        if (methodInfo == null)
+        {
+            Debug.LogError("메서드를 찾을 수 없습니다: SetupOutfit");
+            return;
+        }
+
+        // 메서드 호출
+        methodInfo.Invoke(null, new object[] { menuCommand });
+        Console.ReadKey(); 
+    }
+    
+    private GameObject FindAvatarDescriptor()
+    {
+        VRC_AvatarDescriptor[] avatars = FindObjectsOfType<VRC_AvatarDescriptor>();
+        if (avatars.Length > 0)
+        {
+            return avatars[0].gameObject;
+        }
+        return null;
+    }
+
+    private void CreateAnimation(GameObject targetObject)
     {
         AnimationClip toggleOnClip = new AnimationClip();
         AnimationClip toggleOffClip = new AnimationClip();
         
-        SkinnedMeshRenderer[] renderers = selectedObject.GetComponentsInChildren<SkinnedMeshRenderer>();
+        SkinnedMeshRenderer[] renderers = targetObject.GetComponentsInChildren<SkinnedMeshRenderer>();
 
         foreach (SkinnedMeshRenderer renderer in renderers)
         {
@@ -62,24 +119,24 @@ public class MakeAnimationToggleWindow : EditorWindow
             AddAnimationCurve(toggleOffClip, animPath, false);
         }
         
-        string folderPath = "Assets/MakeToggle";
+        string folderPath = "Assets/EasyCloset";
         if (!AssetDatabase.IsValidFolder(folderPath))
         {
-            AssetDatabase.CreateFolder("Assets", "MakeToggle");
+            AssetDatabase.CreateFolder("Assets", "EasyCloset");
         }
 
-        folderPath += $"/{selectedObject.name}";
+        folderPath += $"/{targetObject.name}";
         if (!AssetDatabase.IsValidFolder(folderPath))
         {
-            AssetDatabase.CreateFolder("Assets/MakeToggle", selectedObject.name);
+            AssetDatabase.CreateFolder("Assets/EasyCloset", targetObject.name);
         }
-        AssetDatabase.CreateAsset(toggleOnClip, $"{folderPath}/{selectedObject.name}_ToggleOn.anim");
-        AssetDatabase.CreateAsset(toggleOffClip, $"{folderPath}/{selectedObject.name}_ToggleOff.anim");
+        AssetDatabase.CreateAsset(toggleOnClip, $"{folderPath}/{targetObject.name}_ToggleOn.anim");
+        AssetDatabase.CreateAsset(toggleOffClip, $"{folderPath}/{targetObject.name}_ToggleOff.anim");
         
-        animatorController = AnimatorController.CreateAnimatorControllerAtPath($"{folderPath}/{selectedObject.name}_ToggleAnimatorController.controller");
+        animatorController = AnimatorController.CreateAnimatorControllerAtPath($"{folderPath}/{targetObject.name}_ToggleAnimatorController.controller");
         
-        animatorController.AddParameter($"{selectedObject.name}Toggle", AnimatorControllerParameterType.Bool);
-
+        animatorController.AddParameter($"{targetObject.name}Toggle", AnimatorControllerParameterType.Bool);
+        
         AnimatorState toggleOnState = animatorController.AddMotion(toggleOnClip);
         AnimatorState toggleOffState = animatorController.AddMotion(toggleOffClip);
         
@@ -87,17 +144,17 @@ public class MakeAnimationToggleWindow : EditorWindow
         
         AnimatorStateMachine stateMachine = animatorController.layers[0].stateMachine;
         AnimatorStateTransition toOffTransition = toggleOnState.AddTransition(toggleOffState);
-        toOffTransition.AddCondition(AnimatorConditionMode.IfNot, 0, $"{selectedObject.name}Toggle");
+        toOffTransition.AddCondition(AnimatorConditionMode.IfNot, 0, $"{targetObject.name}Toggle");
         toOffTransition.hasExitTime = false;
-
+        
         AnimatorStateTransition toOnTransition = toggleOffState.AddTransition(toggleOnState);
-        toOnTransition.AddCondition(AnimatorConditionMode.If, 0, $"{selectedObject.name}Toggle");
+        toOnTransition.AddCondition(AnimatorConditionMode.If, 0, $"{targetObject.name}Toggle");
         toOnTransition.hasExitTime = false;
         
-        Animator animator = selectedObject.GetComponent<Animator>();
+        Animator animator = targetObject.GetComponent<Animator>();
         if (!animator)
         {
-            animator = selectedObject.AddComponent<Animator>();
+            animator = targetObject.AddComponent<Animator>();
         }
         animator.runtimeAnimatorController = animatorController;
         
@@ -112,19 +169,16 @@ public class MakeAnimationToggleWindow : EditorWindow
         clip.SetCurve(path, typeof(GameObject), "m_IsActive", curve);
     }
 
-    /*
-     * AddComponents는 필요한 컴포넌트들을 추가하고, 각 컴포넌트에 적절한 값을 넣는 작업을 수행합니다.
-     */
-    private void AddComponents()
+    private void AddComponents(GameObject targetObject)
     {
         // 1. Menu 생성
-        CreateVRCExpressionsMenu();
+        CreateVRCExpressionsMenu(targetObject);
 
         // 2. MA Menu Installer 컴포넌트 추가
-        ModularAvatarMenuInstaller installer = selectedObject.GetComponent<ModularAvatarMenuInstaller>();
+        ModularAvatarMenuInstaller installer = targetObject.GetComponent<ModularAvatarMenuInstaller>();
         if (!installer)
         {
-            installer = selectedObject.AddComponent<ModularAvatarMenuInstaller>();
+            installer = targetObject.AddComponent<ModularAvatarMenuInstaller>();
         }
         else
         {
@@ -133,7 +187,7 @@ public class MakeAnimationToggleWindow : EditorWindow
         }
         
         // rootMenu를 찾아서 installTargetMenu로 설정
-        VRCAvatarDescriptor avatarDescriptor = selectedObject.GetComponentInParent<VRCAvatarDescriptor>();
+        VRCAvatarDescriptor avatarDescriptor = targetObject.GetComponentInParent<VRCAvatarDescriptor>();
         if (avatarDescriptor)
         {
             installer.installTargetMenu = avatarDescriptor.expressionsMenu;
@@ -156,10 +210,10 @@ public class MakeAnimationToggleWindow : EditorWindow
         installer.menuToAppend.controls[0].parameter.name = animatorController.parameters[0].name;
         
         // 3. MA Parameters 컴포넌트 추가
-        ModularAvatarParameters parameters = selectedObject.GetComponent<ModularAvatarParameters>();
+        ModularAvatarParameters parameters = targetObject.GetComponent<ModularAvatarParameters>();
         if (!parameters)
         {
-            parameters = selectedObject.AddComponent<ModularAvatarParameters>();
+            parameters = targetObject.AddComponent<ModularAvatarParameters>();
         }
 
         // 4. bool 타입의 파라미터 생성 -> animation cotroller에 등록된 파라미터
@@ -175,14 +229,14 @@ public class MakeAnimationToggleWindow : EditorWindow
         
 
         // 5. MA Merge Animator 컴포넌트 추가
-        ModularAvatarMergeAnimator mergeAnimator = selectedObject.GetComponent<ModularAvatarMergeAnimator>();
+        ModularAvatarMergeAnimator mergeAnimator = targetObject.GetComponent<ModularAvatarMergeAnimator>();
         if (!mergeAnimator)
         {
-            mergeAnimator = selectedObject.AddComponent<ModularAvatarMergeAnimator>();
+            mergeAnimator = targetObject.AddComponent<ModularAvatarMergeAnimator>();
         }
 
         // 기본 설정 추가
-        mergeAnimator.animator = selectedObject.GetComponent<Animator>().runtimeAnimatorController;
+        mergeAnimator.animator = targetObject.GetComponent<Animator>().runtimeAnimatorController;
         mergeAnimator.layerType = VRCAvatarDescriptor.AnimLayerType.FX;
         mergeAnimator.deleteAttachedAnimator = true;
         mergeAnimator.pathMode = MergeAnimatorPathMode.Relative;
@@ -207,13 +261,13 @@ public class MakeAnimationToggleWindow : EditorWindow
         return false; 
     }
 
-    private void CreateVRCExpressionsMenu()
+    private void CreateVRCExpressionsMenu(GameObject targetObject)
     {
         //Assets/MakeToggle 확인
-        string folderPath = "Assets/MakeToggle";
+        string folderPath = "Assets/EasyCloset";
         if (!AssetDatabase.IsValidFolder(folderPath))
         {
-            AssetDatabase.CreateFolder("Assets", "MakeToggle");
+            AssetDatabase.CreateFolder("Assets", "EasyCloset");
         }
 
         //Assets/MakeToggle/ClosetMenu.asset 확인
@@ -227,10 +281,10 @@ public class MakeAnimationToggleWindow : EditorWindow
         }
         
         //Assets/MakeToggle/selectObject.name 폴더 확인
-        folderPath += $"/{selectedObject.name}";
+        folderPath += $"/{targetObject.name}";
         if (!AssetDatabase.IsValidFolder(folderPath))
         {
-            AssetDatabase.CreateFolder("MakeToggle", selectedObject.name);
+            AssetDatabase.CreateFolder("EasyCloset", targetObject.name);
         }
         
         //Asset/MakeToggle/selectObject.name/NewExpressionMenu.asset 확인
@@ -244,11 +298,11 @@ public class MakeAnimationToggleWindow : EditorWindow
         _expressionsMenu = CreateInstance<VRCExpressionsMenu>();
         var control = new VRCExpressionsMenu.Control
         {
-            name = selectedObject.name,
+            name = targetObject.name,
             type = VRCExpressionsMenu.Control.ControlType.Toggle,
             parameter = new VRCExpressionsMenu.Control.Parameter
             {
-                name = selectedObject.name + "Toggle"
+                name = targetObject.name + "Toggle"
             }
         };
         _expressionsMenu.controls.Add(control);
